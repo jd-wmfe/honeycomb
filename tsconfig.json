@@ -1,11 +1,5 @@
 {
-    "extends": "@tsconfig/node24/tsconfig.json",
-    "include": [
-        "**/*.ts",
-        "**/*.tsx",
-    ],
-    "exclude": [
-        "node_modules",
-        "dist"
-    ]
+  "extends": "@tsconfig/node24/tsconfig.json",
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "dist"]
 }
