@@ -1,0 +1,15 @@
+{
+  "name": "@jd-wmfe/honeycomb-type",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.mjs"
+  },
+  "types": "./dist/index.d.mts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "unbuild"
+  }
+}
