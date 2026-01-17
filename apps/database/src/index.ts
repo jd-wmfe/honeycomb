@@ -6,6 +6,8 @@ import { Kysely, Insertable, Selectable, Updateable } from 'kysely';
 import { SqlJsDialect } from 'kysely-wasm';
 import type { Database as KyselyDatabase, ConfigsTable, ToolsTable } from './database.js';
 
+export type { ConfigsTable, ToolsTable };
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const dbPath = join(__dirname, '../mcp.db');
 

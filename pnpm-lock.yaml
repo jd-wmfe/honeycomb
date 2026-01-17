@@ -118,6 +118,15 @@ importers:
       express-mcp-handler:
         specifier: ^0.3.0
         version: 0.3.0(@modelcontextprotocol/sdk@1.25.2(hono@4.11.4)(zod@4.3.5))(express@5.2.1)(zod@4.3.5)
+      kysely:
+        specifier: 0.28.9
+        version: 0.28.9
+      kysely-wasm:
+        specifier: 1.2.1
+        version: 1.2.1(kysely@0.28.9)
+      sql.js:
+        specifier: 1.13.0
+        version: 1.13.0
       swagger-jsdoc:
         specifier: 6.2.8
         version: 6.2.8(openapi-types@12.1.3)
