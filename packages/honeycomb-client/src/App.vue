@@ -1,19 +1,14 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { ref, onMounted } from "vue";
+import { ElMessage } from "element-plus";
 import consola from "consola";
 import EditDrawer from "./EditDrawer.vue";
-import {
-  getConfigs,
-  getConfigById,
-  createConfig,
-  updateConfig,
-  deleteConfig,
-  startConfig,
-  stopConfig,
-  type ServiceConfig,
-} from "./api/configs";
-import { StatusEnum } from "@jd-wmfe/honeycomb-common";
+import StatsCards from "./components/StatsCards.vue";
+import SearchFilter from "./components/SearchFilter.vue";
+import ConfigTable from "./components/ConfigTable.vue";
+import { createConfig, updateConfig, type ServiceConfig } from "./api/configs";
+import { useConfigs } from "./composables/useConfigs";
+import { useConfigActions } from "./composables/useConfigActions";
 
 const activeIndex = ref("1");
 const handleSelect = (key: string, keyPath: string[]) => {
@@ -23,92 +18,23 @@ const handleSelect = (key: string, keyPath: string[]) => {
 const drawer = ref(false);
 const currentConfig = ref<ServiceConfig | null>(null);
 
-// 搜索和筛选
-const searchKeyword = ref("");
-const statusFilter = ref<string | null>(null);
-const loading = ref(false);
-const configs = ref<ServiceConfig[]>([]);
+// 使用 composables
+const {
+  loading,
+  configs,
+  searchKeyword,
+  statusFilter,
+  totalServices,
+  runningServices,
+  stoppedServices,
+  filteredData,
+  loadConfigs,
+} = useConfigs();
 
-// 统计数据
-const totalServices = computed(() => configs.value.length);
-const runningServices = computed(
-  () => configs.value.filter((item) => item.status === StatusEnum.RUNNING).length,
+const { handleStart, handleStop, handleDelete, handleEdit } = useConfigActions(
+  loadConfigs,
+  (id) => configs.value.find((c) => c.id === id),
 );
-const stoppedServices = computed(
-  () => configs.value.filter((item) => item.status === StatusEnum.STOPPED).length,
-);
-
-// 过滤后的数据
-const filteredData = computed(() => {
-  let result = configs.value;
-
-  // 搜索过滤
-  if (searchKeyword.value) {
-    const keyword = searchKeyword.value.toLowerCase();
-    result = result.filter(
-      (item) =>
-        item.name.toLowerCase().includes(keyword) ||
-        item.description.toLowerCase().includes(keyword) ||
-        item.version.toLowerCase().includes(keyword) ||
-        item.tools.some(
-          (tool) =>
-            tool.name.toLowerCase().includes(keyword) ||
-            tool.description.toLowerCase().includes(keyword),
-        ),
-    );
-  }
-
-  // 状态过滤
-  if (statusFilter.value) {
-    result = result.filter((item) => item.status === statusFilter.value);
-  }
-
-  return result;
-});
-
-// 加载配置列表
-const loadConfigs = async () => {
-  const startTime = Date.now();
-  loading.value = true;
-  consola.info("[Client] 开始加载配置列表");
-
-  try {
-    const response = await getConfigs();
-    const duration = Date.now() - startTime;
-
-    if (response.code === 200) {
-      configs.value = response.data;
-      const total = response.data.length;
-      const running = response.data.filter(
-        (c: ServiceConfig) => c.status === StatusEnum.RUNNING,
-      ).length;
-      const stopped = response.data.filter(
-        (c: ServiceConfig) => c.status === StatusEnum.STOPPED,
-      ).length;
-      const totalTools = response.data.reduce(
-        (sum: number, c: ServiceConfig) => sum + c.tools.length,
-        0,
-      );
-
-      consola.success(`[Client] 配置列表加载成功 (耗时: ${duration}ms)`);
-      consola.info(
-        `[Client] 统计: 总数=${total}, 运行中=${running}, 已停止=${stopped}, 工具数=${totalTools}`,
-      );
-    } else {
-      consola.error(`[Client] 获取配置列表失败: code=${response.code}, msg=${response.msg}`);
-      ElMessage.error(response.msg || "获取配置列表失败");
-    }
-  } catch (error) {
-    const duration = Date.now() - startTime;
-    consola.error(`[Client] 加载配置列表异常 (耗时: ${duration}ms):`, {
-      error: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined,
-    });
-    ElMessage.error(error instanceof Error ? error.message : "加载配置列表失败");
-  } finally {
-    loading.value = false;
-  }
-};
 
 // 刷新数据
 const handleRefresh = async () => {
@@ -120,170 +46,12 @@ const handleRefresh = async () => {
   ElMessage.success("刷新成功");
 };
 
-// 启动服务
-const onStart = (id: number) => {
-  const config = configs.value.find((c) => c.id === id);
-  consola.info(`[Client] 用户请求启动服务: id=${id}, name=${config?.name || "unknown"}`);
-
-  ElMessageBox.confirm("确定要启动该服务吗？", "提示", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-    type: "warning",
-  })
-    .then(async () => {
-      const startTime = Date.now();
-      consola.info(`[Client] 用户确认启动服务: id=${id}`);
-
-      try {
-        const response = await startConfig(id);
-        const duration = Date.now() - startTime;
-
-        if (response.code === 200) {
-          consola.success(
-            `[Client] 服务启动成功 (耗时: ${duration}ms): id=${id}, name=${response.data?.name || "unknown"}`,
-          );
-          ElMessage.success("启动成功");
-          await loadConfigs(); // 重新加载列表
-        } else {
-          consola.error(
-            `[Client] 服务启动失败: id=${id}, code=${response.code}, msg=${response.msg}`,
-          );
-          ElMessage.error(response.msg || "启动失败");
-        }
-      } catch (error) {
-        const duration = Date.now() - startTime;
-        consola.error(`[Client] 启动服务异常 (耗时: ${duration}ms):`, {
-          id,
-          error: error instanceof Error ? error.message : String(error),
-          stack: error instanceof Error ? error.stack : undefined,
-        });
-        ElMessage.error(error instanceof Error ? error.message : "启动失败");
-      }
-    })
-    .catch(() => {
-      consola.debug(`[Client] 用户取消启动服务: id=${id}`);
-    });
-};
-
-// 停止服务
-const onStop = (id: number) => {
-  const config = configs.value.find((c) => c.id === id);
-  consola.info(`[Client] 用户请求停止服务: id=${id}, name=${config?.name || "unknown"}`);
-
-  ElMessageBox.confirm("确定要停止该服务吗？", "提示", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-    type: "warning",
-  })
-    .then(async () => {
-      const startTime = Date.now();
-      consola.info(`[Client] 用户确认停止服务: id=${id}`);
-
-      try {
-        const response = await stopConfig(id);
-        const duration = Date.now() - startTime;
-
-        if (response.code === 200) {
-          consola.success(
-            `[Client] 服务停止成功 (耗时: ${duration}ms): id=${id}, name=${response.data?.name || "unknown"}`,
-          );
-          ElMessage.success("停止成功");
-          await loadConfigs(); // 重新加载列表
-        } else {
-          consola.error(
-            `[Client] 服务停止失败: id=${id}, code=${response.code}, msg=${response.msg}`,
-          );
-          ElMessage.error(response.msg || "停止失败");
-        }
-      } catch (error) {
-        const duration = Date.now() - startTime;
-        consola.error(`[Client] 停止服务异常 (耗时: ${duration}ms):`, {
-          id,
-          error: error instanceof Error ? error.message : String(error),
-          stack: error instanceof Error ? error.stack : undefined,
-        });
-        ElMessage.error(error instanceof Error ? error.message : "停止失败");
-      }
-    })
-    .catch(() => {
-      consola.debug(`[Client] 用户取消停止服务: id=${id}`);
-    });
-};
-
-// 删除服务
-const onDelete = (id: number) => {
-  const config = configs.value.find((c) => c.id === id);
-  consola.info(`[Client] 用户请求删除服务: id=${id}, name=${config?.name || "unknown"}`);
-
-  ElMessageBox.confirm("确定要删除该服务吗？", "提示", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-    type: "warning",
-  })
-    .then(async () => {
-      const startTime = Date.now();
-      consola.warn(`[Client] 用户确认删除服务: id=${id}, name=${config?.name || "unknown"}`);
-
-      try {
-        const response = await deleteConfig(id);
-        const duration = Date.now() - startTime;
-
-        if (response.code === 200) {
-          consola.success(`[Client] 服务删除成功 (耗时: ${duration}ms): id=${id}`);
-          ElMessage.success("删除成功");
-          await loadConfigs(); // 重新加载列表
-        } else {
-          consola.error(
-            `[Client] 服务删除失败: id=${id}, code=${response.code}, msg=${response.msg}`,
-          );
-          ElMessage.error(response.msg || "删除失败");
-        }
-      } catch (error) {
-        const duration = Date.now() - startTime;
-        consola.error(`[Client] 删除服务异常 (耗时: ${duration}ms):`, {
-          id,
-          error: error instanceof Error ? error.message : String(error),
-          stack: error instanceof Error ? error.stack : undefined,
-        });
-        ElMessage.error(error instanceof Error ? error.message : "删除失败");
-      }
-    })
-    .catch(() => {
-      consola.debug(`[Client] 用户取消删除服务: id=${id}`);
-    });
-};
-
 // 编辑配置
 const onEdit = async (id: number) => {
-  const config = configs.value.find((c) => c.id === id);
-  const startTime = Date.now();
-  consola.info(`[Client] 用户请求编辑配置: id=${id}, name=${config?.name || "unknown"}`);
-
-  try {
-    loading.value = true;
-    const response = await getConfigById(id);
-    const duration = Date.now() - startTime;
-
-    if (response.code === 200) {
-      currentConfig.value = response.data;
-      drawer.value = true;
-      consola.success(
-        `[Client] 配置加载成功 (耗时: ${duration}ms): id=${id}, name=${response.data?.name || "unknown"}, tools=${response.data?.tools.length || 0}`,
-      );
-    } else {
-      consola.error(`[Client] 获取配置失败: id=${id}, code=${response.code}, msg=${response.msg}`);
-      ElMessage.error(response.msg || "获取配置失败");
-    }
-  } catch (error) {
-    const duration = Date.now() - startTime;
-    consola.error(`[Client] 获取配置异常 (耗时: ${duration}ms):`, {
-      id,
-      error: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined,
-    });
-    ElMessage.error(error instanceof Error ? error.message : "获取配置失败");
-  } finally {
-    loading.value = false;
+  const config = await handleEdit(id);
+  if (config) {
+    currentConfig.value = config;
+    drawer.value = true;
   }
 };
 
@@ -420,191 +188,32 @@ onMounted(() => {
       </el-header>
       <el-main>
         <!-- 统计信息卡片 -->
-        <el-row :gutter="20" style="margin-bottom: 20px">
-          <el-col :span="8">
-            <el-card shadow="hover" class="stat-card">
-              <div class="stat-content">
-                <div class="stat-value">{{ totalServices }}</div>
-                <div class="stat-label">总服务数</div>
-              </div>
-              <el-icon class="stat-icon" :size="40" color="#409EFF">
-                <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    fill="currentColor"
-                    d="M832 384H576V128H192v768h640V384zm-26.496-64L640 154.496V320h165.504zM160 64h448l256 256v608a32 32 0 0 1-32 32H160a32 32 0 0 1-32-32V96a32 32 0 0 1 32-32z"
-                  />
-                  <path
-                    fill="currentColor"
-                    d="M240 512h544v64H240v-64zm0 192h544v64H240v-64zm0 128h320v64H240v-64z"
-                  />
-                </svg>
-              </el-icon>
-            </el-card>
-          </el-col>
-          <el-col :span="8">
-            <el-card shadow="hover" class="stat-card stat-card-success">
-              <div class="stat-content">
-                <div class="stat-value">{{ runningServices }}</div>
-                <div class="stat-label">运行中</div>
-              </div>
-              <el-icon class="stat-icon" :size="40" color="#67C23A">
-                <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    fill="currentColor"
-                    d="M512 64a448 448 0 1 1 0 896 448 448 0 0 1 0-896zm23.744 191.488c-52.096 0-92.928 14.784-123.2 44.352-30.976 29.568-45.76 70.4-45.76 122.496 0 48.576 14.08 88.704 41.216 120.384 27.84 32.384 67.328 47.36 116.352 47.36 3.584 0 7.168-.128 10.752-.256a32 32 0 1 1 2.048 64c-4.608.128-9.216.256-13.824.256-139.264 0-244.608-78.336-244.608-231.488 0-70.4 22.144-128.512 65.024-172.032 43.584-44.224 101.888-66.048 176.128-66.048 3.584 0 7.168.128 10.752.256a32 32 0 1 1-2.048 64c-4.608-.256-9.216-.384-13.824-.384zm-12.8 383.36a32 32 0 0 1-22.656-54.656l128-128a32 32 0 0 1 45.312 45.312l-128 128a31.936 31.936 0 0 1-22.656 9.344z"
-                  />
-                </svg>
-              </el-icon>
-            </el-card>
-          </el-col>
-          <el-col :span="8">
-            <el-card shadow="hover" class="stat-card stat-card-warning">
-              <div class="stat-content">
-                <div class="stat-value">{{ stoppedServices }}</div>
-                <div class="stat-label">已停止</div>
-              </div>
-              <el-icon class="stat-icon" :size="40" color="#E6A23C">
-                <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    fill="currentColor"
-                    d="M512 64a448 448 0 1 1 0 896 448 448 0 0 1 0-896zm0 192a32 32 0 0 0-32 32v256a32 32 0 0 0 64 0V288a32 32 0 0 0-32-32zm0 512a32 32 0 1 0 0-64 32 32 0 0 0 0 64z"
-                  />
-                </svg>
-              </el-icon>
-            </el-card>
-          </el-col>
-        </el-row>
+        <StatsCards
+          :total-services="totalServices"
+          :running-services="runningServices"
+          :stopped-services="stoppedServices"
+        />
 
         <!-- 搜索和筛选区域 -->
-        <el-card shadow="never" style="margin-bottom: 20px">
-          <el-row :gutter="16" align="middle">
-            <el-col :span="12">
-              <el-input
-                v-model="searchKeyword"
-                placeholder="搜索服务名称、描述、版本号或工具"
-                clearable
-                style="width: 100%"
-              >
-                <template #prefix>
-                  <el-icon>
-                    <svg
-                      viewBox="0 0 1024 1024"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                    >
-                      <path
-                        fill="currentColor"
-                        d="m795.904 750.72 124.992 124.928a32 32 0 0 1-45.248 45.248L750.656 795.904a416 416 0 1 1 45.248-45.248zM480 832a352 352 0 1 0 0-704 352 352 0 0 0 0 704z"
-                      />
-                    </svg>
-                  </el-icon>
-                </template>
-              </el-input>
-            </el-col>
-            <el-col :span="6">
-              <el-select
-                v-model="statusFilter"
-                placeholder="全部状态"
-                clearable
-                style="width: 100%"
-              >
-                <el-option label="全部状态" :value="null" />
-                <el-option label="运行中" :value="StatusEnum.RUNNING" />
-                <el-option label="已停止" :value="StatusEnum.STOPPED" />
-              </el-select>
-            </el-col>
-            <el-col :span="6">
-              <el-space>
-                <el-button :loading="loading" @click="handleRefresh">
-                  <el-icon style="margin-right: 5px">
-                    <svg
-                      viewBox="0 0 1024 1024"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                    >
-                      <path
-                        fill="currentColor"
-                        d="M784.512 230.272v-50.56a32 32 0 1 1 64 0v149.056a32 32 0 0 1-32 32H667.52a32 32 0 1 1 0-64h92.992A320 320 0 1 0 524.8 833.152a320 320 0 0 0 320-320h64a384 384 0 0 1-384 384 384 384 0 0 1-384-384 384 384 0 0 1 643.712-282.88z"
-                      />
-                    </svg>
-                  </el-icon>
-                  刷新
-                </el-button>
-                <el-button type="primary" @click="onAdd">添加服务</el-button>
-              </el-space>
-            </el-col>
-          </el-row>
-        </el-card>
+        <SearchFilter
+          :search-keyword="searchKeyword"
+          :status-filter="statusFilter"
+          :loading="loading"
+          @update:search-keyword="(val) => (searchKeyword = val)"
+          @update:status-filter="(val) => (statusFilter = val)"
+          @refresh="handleRefresh"
+          @add="onAdd"
+        />
 
         <!-- 数据表格 -->
-        <el-table
-          v-loading="loading"
+        <ConfigTable
+          :loading="loading"
           :data="filteredData"
-          style="width: 100%"
-          stripe
-          empty-text="暂无数据"
-        >
-          <el-table-column property="name" label="服务名" width="200" fixed="left" />
-          <el-table-column property="version" label="版本号" width="100" />
-          <el-table-column property="status" label="状态" width="120">
-            <template #default="scope">
-              <el-tag :type="scope.row.status === StatusEnum.RUNNING ? 'success' : 'warning'">{{
-                scope.row.statusText
-              }}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column property="description" label="描述" show-overflow-tooltip width="400" />
-          <el-table-column property="tools" label="工具" width="400">
-            <template #default="scope">
-              <el-space wrap>
-                <el-tag
-                  v-for="tool in scope.row.tools"
-                  :key="tool.name"
-                  type="info"
-                  size="small"
-                  effect="plain"
-                  :title="tool.description"
-                >
-                  {{ tool.name }}
-                </el-tag>
-                <el-text v-if="scope.row.tools.length === 0" type="info" size="small"
-                  >暂无工具</el-text
-                >
-              </el-space>
-            </template>
-          </el-table-column>
-          <el-table-column property="createdAt" label="创建时间" width="200" />
-          <el-table-column property="lastModified" label="最后修改时间" width="200" />
-
-          <el-table-column fixed="right" width="160">
-            <template #default="scope">
-              <el-button link type="primary" size="small" @click="onEdit(scope.row.id)"
-                >编辑</el-button
-              >
-              <el-button
-                v-if="scope.row.status === StatusEnum.STOPPED"
-                link
-                type="success"
-                size="small"
-                @click="onStart(scope.row.id)"
-                >启动</el-button
-              >
-              <el-button
-                v-if="scope.row.status === StatusEnum.RUNNING"
-                link
-                type="warning"
-                size="small"
-                @click="onStop(scope.row.id)"
-                >停止</el-button
-              >
-              <el-button link type="danger" size="small" @click="onDelete(scope.row.id)"
-                >删除</el-button
-              >
-            </template>
-          </el-table-column>
-        </el-table>
+          @edit="onEdit"
+          @start="handleStart"
+          @stop="handleStop"
+          @delete="handleDelete"
+        />
         <!-- 分页 -->
         <div
           style="
@@ -637,50 +246,5 @@ onMounted(() => {
 <style scoped>
 .el-menu--horizontal > .el-menu-item:nth-child(1) {
   margin-right: auto;
-}
-
-.stat-card {
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.stat-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-.stat-content {
-  position: relative;
-  z-index: 1;
-}
-
-.stat-value {
-  font-size: 32px;
-  font-weight: bold;
-  color: #303133;
-  margin-bottom: 8px;
-}
-
-.stat-label {
-  font-size: 14px;
-  color: #909399;
-}
-
-.stat-icon {
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  opacity: 0.3;
-}
-
-.stat-card-success .stat-value {
-  color: #67c23a;
-}
-
-.stat-card-warning .stat-value {
-  color: #e6a23c;
 }
 </style>
