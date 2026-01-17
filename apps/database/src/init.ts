@@ -49,9 +49,9 @@ try {
   `);
   
   insertConfig.run([
-    '测试服务',
+    'test-service',
     '1.0.0',
-    '这是一个测试服务配置',
+    'This is a test service configuration',
     now,
     now,
   ]);
@@ -69,11 +69,11 @@ try {
   
   insertTool.run([
     configId,
-    '测试工具',
-    '这是一个测试工具',
-    '{message: z.string().describe("测试消息")}',
-    '{result: z.string().describe("测试结果")}',
-    'async ({ message }) => { return { content: [{ type: "text", text: `测试: ${message}` }] }; }',
+    'test-tool',
+    'This is a test tool',
+    '{"message": {"type": "string", "description": "Test message"}}',
+    '{"result": {"type": "string", "description": "Test result"}}',
+    'async ({ message }) => { return { content: [{ type: "text", text: `Test: ${message}` }] }; }',
   ]);
   insertTool.free();
 

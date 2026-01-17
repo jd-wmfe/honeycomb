@@ -17,6 +17,7 @@
     "@jd-wmfe/honeycomb-type": "workspace:*",
     "@jd-wmfe/honeycomb-database": "workspace:*",
       "@modelcontextprotocol/sdk": "1.25.2",
+      "consola": "3.4.2",
       "zod": "4.3.5",
     "express": "5.2.1",
     "express-mcp-handler": "^0.3.0"

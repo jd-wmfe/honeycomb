@@ -75,9 +75,6 @@ importers:
 
   apps/database:
     dependencies:
-      citty:
-        specifier: 0.1.6
-        version: 0.1.6
       consola:
         specifier: 3.4.2
         version: 3.4.2
@@ -100,6 +97,9 @@ importers:
       '@modelcontextprotocol/sdk':
         specifier: 1.25.2
         version: 1.25.2(hono@4.11.4)(zod@4.3.5)
+      consola:
+        specifier: 3.4.2
+        version: 3.4.2
       express:
         specifier: 5.2.1
         version: 5.2.1
