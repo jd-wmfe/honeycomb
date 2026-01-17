@@ -1,3 +1,17 @@
+## [2.0.4](https://github.com/jd-wmfe/honeycomb/compare/v2.0.3...v2.0.4) (2026-01-17)
+
+
+### Features
+
+* 修复测试用例 ([9788ea1](https://github.com/jd-wmfe/honeycomb/commit/9788ea1ec81b1e94d759acccb2224e580a671a82))
+* 更新流水线环境配置 ([1d22cf4](https://github.com/jd-wmfe/honeycomb/commit/1d22cf4cbdae23f03de44119ae1c4cffd2779f0d))
+* 更新测试流水线名称 ([81a7de5](https://github.com/jd-wmfe/honeycomb/commit/81a7de5cff169442f2fb2e082d1250002a7c35e5))
+* 添加CI/CD ([f2f9560](https://github.com/jd-wmfe/honeycomb/commit/f2f9560693785faff73f42dc84a37eb2b004064d))
+* 添加测试用例 ([8dd5737](https://github.com/jd-wmfe/honeycomb/commit/8dd5737d3ddb40cc1d0425c1361d9d8814bb59ad))
+* 配置changeog生成 ([baff377](https://github.com/jd-wmfe/honeycomb/commit/baff377e2fca22b722326939d7cfc4f03dd4d28b))
+
+
+
 ## [2.0.3](https://github.com/jd-wmfe/honeycomb/compare/v2.0.2...v2.0.3) (2026-01-17)
 
 
