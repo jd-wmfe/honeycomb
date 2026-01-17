@@ -1,0 +1,23 @@
+{
+  "name": "@jd-wmfe/honeycomb-database",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.mjs"
+  },
+  "types": "./dist/index.d.mts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "unbuild",
+    "start": "node dist/index.mjs"
+  },
+  "dependencies": {
+    "consola": "3.4.2",
+    "sql.js": "1.13.0"
+  },
+  "devDependencies": {
+    "@types/sql.js": "1.4.9"
+  }
+}
