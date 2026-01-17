@@ -6,9 +6,10 @@
  * 示例: node scripts/version.mjs 1.0.1
  */
 
-import { readFileSync, writeFileSync } from "fs";
+import { readFileSync, writeFileSync, existsSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
+import { execSync } from "child_process";
 import { consola } from "consola";
 import { simpleGit } from "simple-git";
 
@@ -45,14 +46,37 @@ for (const pkgPath of packages) {
 
 consola.success(`已更新 ${count} 个包的版本号为 ${newVersion}`);
 
+// 生成 CHANGELOG
+const changelogPath = join(rootDir, "CHANGELOG.md");
+try {
+  consola.info("正在生成 CHANGELOG...");
+  
+  // 如果 CHANGELOG.md 不存在，创建一个空文件
+  if (!existsSync(changelogPath)) {
+    writeFileSync(changelogPath, "# Changelog\n\n", "utf-8");
+    consola.info("已创建 CHANGELOG.md 文件");
+  }
+
+  // 使用 conventional-changelog 生成 changelog
+  execSync("conventional-changelog -p angular -i CHANGELOG.md -s", {
+    cwd: rootDir,
+    stdio: "pipe",
+  });
+  
+  consola.success("CHANGELOG 生成成功！");
+} catch (error) {
+  consola.warn(`生成 CHANGELOG 失败: ${error.message}`);
+  consola.info("将继续执行版本更新流程...");
+}
+
 // Git 操作
 const git = simpleGit(rootDir);
 const tagName = `v${newVersion}`;
 const commitMessage = `chore: release ${tagName}`;
 
 try {
-  // 添加所有变更的文件
-  await git.add(packages);
+  // 添加所有变更的文件（包括 CHANGELOG.md）
+  await git.add([...packages, "CHANGELOG.md"]);
 
   // 提交
   await git.commit(commitMessage);
