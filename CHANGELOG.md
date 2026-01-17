@@ -1,3 +1,14 @@
+## [2.0.6](https://github.com/jd-wmfe/honeycomb/compare/v2.0.5...v2.0.6) (2026-01-17)
+
+### Features
+
+- 修复关闭问题 ([1d92b5c](https://github.com/jd-wmfe/honeycomb/commit/1d92b5c70b2873907d50c5b34442fb7a672a6413))
+- 修复打包问题 ([a07f45d](https://github.com/jd-wmfe/honeycomb/commit/a07f45dad0df58b2e79df93e4f272c598f22d837))
+- 更新env.example配置 ([ea57ff8](https://github.com/jd-wmfe/honeycomb/commit/ea57ff8f50c393a1b45a109840e078d6a5fd5f7e))
+- 更新pnpm-lock文件 ([9eb1cc3](https://github.com/jd-wmfe/honeycomb/commit/9eb1cc33b3fa15607e1341280fdf5cc4b8452281))
+- 进一步润色项目 ([54b7dcc](https://github.com/jd-wmfe/honeycomb/commit/54b7dccad12c0c6194a8bf891d1a0e73e21165bd))
+- 配置commitizen工具 ([1affc44](https://github.com/jd-wmfe/honeycomb/commit/1affc442103031336d5304443cffa11cf9f2598f))
+
 ## [2.0.5](https://github.com/jd-wmfe/honeycomb/compare/v2.0.4...v2.0.5) (2026-01-17)
 
 ### Features
