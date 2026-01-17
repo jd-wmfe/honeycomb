@@ -62,6 +62,14 @@ try {
   await git.addTag(tagName);
   consola.success(`Git tag 创建成功: ${tagName}`);
   
+  // 推送提交到远程
+  await git.push();
+  consola.success('Git 提交已推送到远程');
+  
+  // 推送 tag 到远程
+  await git.pushTags('origin');
+  consola.success(`Git tag ${tagName} 已推送到远程`);
+  
   consola.success('版本更新完成！');
 } catch (error) {
   consola.error(`Git 操作失败: ${error.message}`);
@@ -69,5 +77,7 @@ try {
   consola.info('  git add .');
   consola.info(`  git commit -m "${commitMessage}"`);
   consola.info(`  git tag ${tagName}`);
+  consola.info('  git push');
+  consola.info(`  git push origin ${tagName}`);
   process.exit(1);
 }
