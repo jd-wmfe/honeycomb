@@ -6,6 +6,7 @@ import type {
   UpdateConfigDTO,
 } from '@jd-wmfe/honeycomb-type'
 import { ApiEnum } from '@jd-wmfe/honeycomb-type'
+import { replaceUrlParams } from '../utils/url'
 
 /**
  * 获取所有配置（带工具）
@@ -18,7 +19,7 @@ export async function getConfigs(): Promise<ApiResponse<QueryConfigsVO>> {
  * 获取单个配置（带工具）
  */
 export async function getConfigById(id: number): Promise<ApiResponse<QueryConfigVO>> {
-  const url = ApiEnum.QUERY_CONFIG.replace(':id', String(id))
+  const url = replaceUrlParams(ApiEnum.QUERY_CONFIG, { id })
   return get<QueryConfigVO>(url)
 }
 
@@ -36,7 +37,7 @@ export async function updateConfig(
   id: number,
   config: Omit<UpdateConfigDTO, 'id'>
 ): Promise<ApiResponse<QueryConfigVO>> {
-  const url = ApiEnum.UPDATE_CONFIG.replace(':id', String(id))
+  const url = replaceUrlParams(ApiEnum.UPDATE_CONFIG, { id })
   const dto: UpdateConfigDTO = {
     id,
     ...config,
@@ -48,7 +49,7 @@ export async function updateConfig(
  * 删除配置
  */
 export async function deleteConfig(id: number): Promise<ApiResponse<null>> {
-  const url = ApiEnum.DELETE_CONFIG.replace(':id', String(id))
+  const url = replaceUrlParams(ApiEnum.DELETE_CONFIG, { id })
   return del<null>(url)
 }
 
@@ -56,7 +57,7 @@ export async function deleteConfig(id: number): Promise<ApiResponse<null>> {
  * 启动服务
  */
 export async function startConfig(id: number): Promise<ApiResponse<QueryConfigVO>> {
-  const url = ApiEnum.START_CONFIG.replace(':id', String(id))
+  const url = replaceUrlParams(ApiEnum.START_CONFIG, { id })
   return post<QueryConfigVO>(url)
 }
 
@@ -64,7 +65,7 @@ export async function startConfig(id: number): Promise<ApiResponse<QueryConfigVO
  * 停止服务
  */
 export async function stopConfig(id: number): Promise<ApiResponse<QueryConfigVO>> {
-  const url = ApiEnum.STOP_CONFIG.replace(':id', String(id))
+  const url = replaceUrlParams(ApiEnum.STOP_CONFIG, { id })
   return post<QueryConfigVO>(url)
 }
 

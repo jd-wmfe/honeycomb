@@ -11,13 +11,13 @@ import { StatusEnum } from '@jd-wmfe/honeycomb-type';
 import type { McpHandlers } from '../mcp';
 import { refreshMcpServices } from '../mcp';
 import { dbToVO, createDtoToDb, updateDtoToDb, getCurrentTimeString } from '../utils';
-
-// API 响应格式
-type ApiResponse<T> = {
-  code: number;
-  msg: string;
-  data: T;
-};
+import {
+  validateIdParam,
+  createSuccessResponse,
+  createErrorResponse,
+  handleError,
+  type ApiResponse,
+} from './utils';
 
 /**
  * GET /api/configs - 获取所有配置（带工具）
@@ -34,20 +34,9 @@ export async function getConfigsHandler(
 
     const configsVO: QueryConfigsVO = dbConfigs.map(dbToVO);
 
-    const response: ApiResponse<QueryConfigsVO> = {
-      code: 200,
-      msg: 'success',
-      data: configsVO,
-    };
-
-    res.json(response);
+    res.json(createSuccessResponse(configsVO));
   } catch (error) {
-    consola.error('[API] 获取配置列表失败:', error);
-    res.status(500).json({
-      code: 500,
-      msg: error instanceof Error ? error.message : '获取配置列表失败',
-      data: null,
-    });
+    handleError(res, error, '获取配置列表失败', '获取配置列表失败');
   }
 }
 
@@ -57,46 +46,21 @@ export async function getConfigsHandler(
 export async function getConfigByIdHandler(req: express.Request, res: express.Response) {
   consola.info('[API] 获取单个配置请求:', req.params);
   try {
-    const idParam = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-    const id = parseInt(idParam || '', 10);
-    if (isNaN(id)) {
-      res.status(400).json({
-        code: 400,
-        msg: '无效的配置 ID',
-        data: null,
-      });
-      return;
-    }
+    const id = validateIdParam(req, res);
+    if (id === null) return;
 
     const databaseClient = await getDatabaseClient();
     const dbConfig = await databaseClient.getConfigWithTools(id);
 
     if (!dbConfig) {
-      res.status(404).json({
-        code: 404,
-        msg: '配置不存在',
-        data: null,
-      });
+      res.status(404).json(createErrorResponse(404, '配置不存在'));
       return;
     }
 
     const configVO = dbToVO(dbConfig);
-
-    const response: ApiResponse<QueryConfigVO> = {
-      code: 200,
-      msg: 'success',
-      data: configVO,
-    };
-
-    res.json(response);
+    res.json(createSuccessResponse(configVO));
   } catch (error) {
-    const idParam = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-    consola.error(`[API] 获取配置 ${idParam} 失败:`, error);
-    res.status(500).json({
-      code: 500,
-      msg: error instanceof Error ? error.message : '获取配置失败',
-      data: null,
-    });
+    handleError(res, error, '获取配置失败', `获取配置 ${req.params.id} 失败`);
   }
 }
 
@@ -160,20 +124,9 @@ export async function createConfigHandler(
       throw new Error('创建配置后无法获取配置数据');
     }
 
-    const response: ApiResponse<QueryConfigVO> = {
-      code: 200,
-      msg: 'success',
-      data: dbToVO(newDbConfig),
-    };
-
-    res.status(201).json(response);
+    res.status(201).json(createSuccessResponse(dbToVO(newDbConfig)));
   } catch (error) {
-    consola.error('[API] 创建配置失败:', error);
-    res.status(500).json({
-      code: 500,
-      msg: error instanceof Error ? error.message : '创建配置失败',
-      data: null,
-    });
+    handleError(res, error, '创建配置失败', '创建配置失败');
   }
 }
 
@@ -187,16 +140,8 @@ export async function updateConfigHandler(
 ) {
   consola.info('[API] 更新配置请求:', req.params);
   try {
-    const idParam = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-    const id = parseInt(idParam || '', 10);
-    if (isNaN(id)) {
-      res.status(400).json({
-        code: 400,
-        msg: '无效的配置 ID',
-        data: null,
-      });
-      return;
-    }
+    const id = validateIdParam(req, res);
+    if (id === null) return;
 
     const dto = req.body as UpdateConfigDTO;
     const databaseClient = await getDatabaseClient();
@@ -204,11 +149,7 @@ export async function updateConfigHandler(
     // 检查配置是否存在
     const existingConfig = await databaseClient.getConfigById(id);
     if (!existingConfig) {
-      res.status(404).json({
-        code: 404,
-        msg: '配置不存在',
-        data: null,
-      });
+      res.status(404).json(createErrorResponse(404, '配置不存在'));
       return;
     }
 
@@ -257,21 +198,9 @@ export async function updateConfigHandler(
       throw new Error('更新配置后无法获取配置数据');
     }
 
-    const response: ApiResponse<QueryConfigVO> = {
-      code: 200,
-      msg: 'success',
-      data: dbToVO(updatedDbConfig),
-    };
-
-    res.json(response);
+    res.json(createSuccessResponse(dbToVO(updatedDbConfig)));
   } catch (error) {
-    const idParam = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-    consola.error(`[API] 更新配置 ${idParam} 失败:`, error);
-    res.status(500).json({
-      code: 500,
-      msg: error instanceof Error ? error.message : '更新配置失败',
-      data: null,
-    });
+    handleError(res, error, '更新配置失败', `更新配置 ${req.params.id} 失败`);
   }
 }
 
@@ -285,27 +214,15 @@ export async function deleteConfigHandler(
 ) {
   consola.info('[API] 删除配置请求:', req.params);
   try {
-    const idParam = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-    const id = parseInt(idParam || '', 10);
-    if (isNaN(id)) {
-      res.status(400).json({
-        code: 400,
-        msg: '无效的配置 ID',
-        data: null,
-      });
-      return;
-    }
+    const id = validateIdParam(req, res);
+    if (id === null) return;
 
     const databaseClient = await getDatabaseClient();
 
     // 检查配置是否存在
     const existingConfig = await databaseClient.getConfigById(id);
     if (!existingConfig) {
-      res.status(404).json({
-        code: 404,
-        msg: '配置不存在',
-        data: null,
-      });
+      res.status(404).json(createErrorResponse(404, '配置不存在'));
       return;
     }
 
@@ -318,21 +235,9 @@ export async function deleteConfigHandler(
     // 刷新 MCP 服务
     await refreshMcpServices(handlersMap);
 
-    const response: ApiResponse<null> = {
-      code: 200,
-      msg: 'success',
-      data: null,
-    };
-
-    res.json(response);
+    res.json(createSuccessResponse(null));
   } catch (error) {
-    const idParam = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-    consola.error(`[API] 删除配置 ${idParam} 失败:`, error);
-    res.status(500).json({
-      code: 500,
-      msg: error instanceof Error ? error.message : '删除配置失败',
-      data: null,
-    });
+    handleError(res, error, '删除配置失败', `删除配置 ${req.params.id} 失败`);
   }
 }
 
@@ -346,27 +251,15 @@ export async function startConfigHandler(
 ) {
   consola.info('[API] 启动服务请求:', req.params);
   try {
-    const idParam = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-    const id = parseInt(idParam || '', 10);
-    if (isNaN(id)) {
-      res.status(400).json({
-        code: 400,
-        msg: '无效的配置 ID',
-        data: null,
-      });
-      return;
-    }
+    const id = validateIdParam(req, res);
+    if (id === null) return;
 
     const databaseClient = await getDatabaseClient();
 
     // 检查配置是否存在
     const existingConfig = await databaseClient.getConfigById(id);
     if (!existingConfig) {
-      res.status(404).json({
-        code: 404,
-        msg: '配置不存在',
-        data: null,
-      });
+      res.status(404).json(createErrorResponse(404, '配置不存在'));
       return;
     }
 
@@ -388,21 +281,9 @@ export async function startConfigHandler(
       throw new Error('启动服务后无法获取配置数据');
     }
 
-    const response: ApiResponse<QueryConfigVO> = {
-      code: 200,
-      msg: 'success',
-      data: dbToVO(updatedDbConfig),
-    };
-
-    res.json(response);
+    res.json(createSuccessResponse(dbToVO(updatedDbConfig)));
   } catch (error) {
-    const idParam = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-    consola.error(`[API] 启动服务 ${idParam} 失败:`, error);
-    res.status(500).json({
-      code: 500,
-      msg: error instanceof Error ? error.message : '启动服务失败',
-      data: null,
-    });
+    handleError(res, error, '启动服务失败', `启动服务 ${req.params.id} 失败`);
   }
 }
 
@@ -416,27 +297,15 @@ export async function stopConfigHandler(
 ) {
   consola.info('[API] 停止服务请求:', req.params);
   try {
-    const idParam = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-    const id = parseInt(idParam || '', 10);
-    if (isNaN(id)) {
-      res.status(400).json({
-        code: 400,
-        msg: '无效的配置 ID',
-        data: null,
-      });
-      return;
-    }
+    const id = validateIdParam(req, res);
+    if (id === null) return;
 
     const databaseClient = await getDatabaseClient();
 
     // 检查配置是否存在
     const existingConfig = await databaseClient.getConfigById(id);
     if (!existingConfig) {
-      res.status(404).json({
-        code: 404,
-        msg: '配置不存在',
-        data: null,
-      });
+      res.status(404).json(createErrorResponse(404, '配置不存在'));
       return;
     }
 
@@ -458,20 +327,8 @@ export async function stopConfigHandler(
       throw new Error('停止服务后无法获取配置数据');
     }
 
-    const response: ApiResponse<QueryConfigVO> = {
-      code: 200,
-      msg: 'success',
-      data: dbToVO(updatedDbConfig),
-    };
-
-    res.json(response);
+    res.json(createSuccessResponse(dbToVO(updatedDbConfig)));
   } catch (error) {
-    const idParam = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-    consola.error(`[API] 停止服务 ${idParam} 失败:`, error);
-    res.status(500).json({
-      code: 500,
-      msg: error instanceof Error ? error.message : '停止服务失败',
-      data: null,
-    });
+    handleError(res, error, '停止服务失败', `停止服务 ${req.params.id} 失败`);
   }
 }

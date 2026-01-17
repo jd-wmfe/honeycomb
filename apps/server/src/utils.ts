@@ -38,14 +38,7 @@ export function dbToVO(dbConfig: ConfigWithTools): QueryConfigVO {
  * 将 CreateConfigDTO 转换为数据库格式
  */
 export function createDtoToDb(dto: CreateConfigDTO, status: StatusEnum = StatusEnum.STOPPED): Omit<Selectable<ConfigsTable>, 'id'> {
-  const now = new Date().toLocaleString('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  }).replace(/\//g, '-');
+  const now = getCurrentTimeString();
 
   return {
     name: dto.name,
@@ -65,14 +58,7 @@ export function updateDtoToDb(dto: UpdateConfigDTO): Partial<Selectable<ConfigsT
     name: dto.name,
     version: dto.version,
     description: dto.description,
-    last_modified: new Date().toLocaleString('zh-CN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-    }).replace(/\//g, '-'),
+    last_modified: getCurrentTimeString(),
   };
 
   return dbConfig;
