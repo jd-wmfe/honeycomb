@@ -103,6 +103,11 @@ const handleSave = (config: any) => {
     mockData.data.push(config)
   }
 }
+
+const onAdd = () => {
+  currentConfig.value = null
+  drawer.value = true
+}
 </script>
 
 <template>
@@ -127,6 +132,11 @@ const handleSave = (config: any) => {
         </el-menu>
       </el-header>
       <el-main>
+
+        <el-space>
+          <el-button type="primary" @click="onAdd">添加服务</el-button>
+        </el-space>
+
         <el-table :data="mockData.data" style="width: 100%" stripe>
           <el-table-column property="name" label="服务名" width="200" fixed="left" />
           <el-table-column property="version" label="版本号" width="100" />
