@@ -1,3 +1,12 @@
+## [2.0.7](https://github.com/jd-wmfe/honeycomb/compare/v2.0.6...v2.0.7) (2026-01-17)
+
+### Features
+
+- 删除数据库 ([ac85243](https://github.com/jd-wmfe/honeycomb/commit/ac85243ffbad1a83901c54c3b97abddcbbcddce1))
+- 处理package.json ([dab1ce2](https://github.com/jd-wmfe/honeycomb/commit/dab1ce2aa5dfbe1d0d956462dcec46405df7eda4))
+- 更新ignore ([0bd1bd8](https://github.com/jd-wmfe/honeycomb/commit/0bd1bd877b370746320275b3aff7ba74888d30e0))
+- 更新README图片 ([2b66e37](https://github.com/jd-wmfe/honeycomb/commit/2b66e37e024950ea1e12998faf384c40d5fd06a3))
+
 ## [2.0.6](https://github.com/jd-wmfe/honeycomb/compare/v2.0.5...v2.0.6) (2026-01-17)
 
 ### Features
