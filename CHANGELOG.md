@@ -1,3 +1,12 @@
+## [2.0.5](https://github.com/jd-wmfe/honeycomb/compare/v2.0.4...v2.0.5) (2026-01-17)
+
+### Features
+
+- 处理commit信息娇艳 ([0a2ea00](https://github.com/jd-wmfe/honeycomb/commit/0a2ea009a6968fb6cc85a92180293934c2e0b4e2))
+- 处理git钩子 ([38ce6bc](https://github.com/jd-wmfe/honeycomb/commit/38ce6bc1ab631b56316e87e26fbc2dbe419d5cd0))
+- 清理husky的钩子 ([2f7fc45](https://github.com/jd-wmfe/honeycomb/commit/2f7fc45a5638a2f5b0f2792529c452fab9a945a9))
+- 适配husky9规范 ([9afe850](https://github.com/jd-wmfe/honeycomb/commit/9afe850049126dd9e755e69515b58fa2040b9201))
+
 ## [2.0.4](https://github.com/jd-wmfe/honeycomb/compare/v2.0.3...v2.0.4) (2026-01-17)
 
 ### Features
