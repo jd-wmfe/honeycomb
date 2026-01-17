@@ -2,26 +2,7 @@
 import { ref, watch, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { DrawerProps } from 'element-plus'
-
-interface Tool {
-  name: string
-  description: string
-  inputSchema: string
-  outputSchema: string
-  callback: string
-}
-
-interface ServiceConfig {
-  id: number
-  name: string
-  version: string
-  status: 'running' | 'stopped'
-  statusText: string
-  description: string
-  tools: Tool[]
-  createdAt: string
-  lastModified: string
-}
+import type { ServiceConfig, Tool } from './api/configs'
 
 const props = defineProps<{
   modelValue: boolean
@@ -220,8 +201,7 @@ const saveConfig = () => {
   }).replace(/\//g, '-')
   
   emit('save', { ...formData.value })
-  drawerVisible.value = false
-  ElMessage.success('保存成功')
+  // 注意：不在这里关闭抽屉和显示消息，由父组件处理（因为涉及异步 API 调用）
 }
 
 // 取消

@@ -1,8 +1,17 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import mockData from '../../mocks/api.v1.queryConfigs.mock.json'
 import EditDrawer from './EditDrawer.vue'
+import {
+  getConfigs,
+  getConfigById,
+  createConfig,
+  updateConfig,
+  deleteConfig,
+  startConfig,
+  stopConfig,
+  type ServiceConfig,
+} from './api/configs'
 
 const activeIndex = ref('1')
 const handleSelect = (key: string, keyPath: string[]) => {
@@ -10,21 +19,22 @@ const handleSelect = (key: string, keyPath: string[]) => {
 }
 
 const drawer = ref(false)
-const currentConfig = ref<any>(null)
+const currentConfig = ref<ServiceConfig | null>(null)
 
 // 搜索和筛选
 const searchKeyword = ref('')
 const statusFilter = ref<string | null>(null)
 const loading = ref(false)
+const configs = ref<ServiceConfig[]>([])
 
 // 统计数据
-const totalServices = computed(() => mockData.data.length)
-const runningServices = computed(() => mockData.data.filter(item => item.status === 'running').length)
-const stoppedServices = computed(() => mockData.data.filter(item => item.status === 'stopped').length)
+const totalServices = computed(() => configs.value.length)
+const runningServices = computed(() => configs.value.filter(item => item.status === 'running').length)
+const stoppedServices = computed(() => configs.value.filter(item => item.status === 'stopped').length)
 
 // 过滤后的数据
 const filteredData = computed(() => {
-  let result = mockData.data
+  let result = configs.value
 
   // 搜索过滤
   if (searchKeyword.value) {
@@ -48,20 +58,31 @@ const filteredData = computed(() => {
   return result
 })
 
-// 刷新数据
-const handleRefresh = async () => {
+// 加载配置列表
+const loadConfigs = async () => {
   loading.value = true
   try {
-    // 模拟API调用
-    await new Promise(resolve => setTimeout(resolve, 500))
-    ElMessage.success('刷新成功')
+    const response = await getConfigs()
+    if (response.code === 200) {
+      configs.value = response.data
+    } else {
+      ElMessage.error(response.msg || '获取配置列表失败')
+    }
   } catch (error) {
-    ElMessage.error('刷新失败')
+    console.error('加载配置列表失败:', error)
+    ElMessage.error(error instanceof Error ? error.message : '加载配置列表失败')
   } finally {
     loading.value = false
   }
 }
 
+// 刷新数据
+const handleRefresh = async () => {
+  await loadConfigs()
+  ElMessage.success('刷新成功')
+}
+
+// 启动服务
 const onStart = (id: number) => {
   ElMessageBox.confirm(
     '确定要启动该服务吗？',
@@ -72,20 +93,26 @@ const onStart = (id: number) => {
       type: 'warning',
     }
   )
-    .then(() => {
-      ElMessage({
-        type: 'success',
-        message: '启动成功',
-      })
+    .then(async () => {
+      try {
+        const response = await startConfig(id)
+        if (response.code === 200) {
+          ElMessage.success('启动成功')
+          await loadConfigs() // 重新加载列表
+        } else {
+          ElMessage.error(response.msg || '启动失败')
+        }
+      } catch (error) {
+        console.error('启动服务失败:', error)
+        ElMessage.error(error instanceof Error ? error.message : '启动失败')
+      }
     })
     .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: '启动失败',
-      })
+      // 用户取消
     })
 }
 
+// 停止服务
 const onStop = (id: number) => {
   ElMessageBox.confirm(
     '确定要停止该服务吗？',
@@ -96,20 +123,26 @@ const onStop = (id: number) => {
       type: 'warning',
     }
   )
-    .then(() => {
-      ElMessage({
-        type: 'success',
-        message: '停止成功',
-      })
+    .then(async () => {
+      try {
+        const response = await stopConfig(id)
+        if (response.code === 200) {
+          ElMessage.success('停止成功')
+          await loadConfigs() // 重新加载列表
+        } else {
+          ElMessage.error(response.msg || '停止失败')
+        }
+      } catch (error) {
+        console.error('停止服务失败:', error)
+        ElMessage.error(error instanceof Error ? error.message : '停止失败')
+      }
     })
     .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: '停止失败',
-      })
+      // 用户取消
     })
 }
 
+// 删除服务
 const onDelete = (id: number) => {
   ElMessageBox.confirm(
     '确定要删除该服务吗？',
@@ -120,44 +153,97 @@ const onDelete = (id: number) => {
       type: 'warning',
     }
   )
-    .then(() => {
-      ElMessage({
-        type: 'success',
-        message: '删除成功',
-      })
+    .then(async () => {
+      try {
+        const response = await deleteConfig(id)
+        if (response.code === 200) {
+          ElMessage.success('删除成功')
+          await loadConfigs() // 重新加载列表
+        } else {
+          ElMessage.error(response.msg || '删除失败')
+        }
+      } catch (error) {
+        console.error('删除服务失败:', error)
+        ElMessage.error(error instanceof Error ? error.message : '删除失败')
+      }
     })
     .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: '删除失败',
-      })
+      // 用户取消
     })
 }
 
-const onEdit = (id: number) => {
-  const config = mockData.data.find(item => item.id === id)
-  currentConfig.value = config || null
-  drawer.value = true
-}
-
-const handleSave = (config: any) => {
-  // 这里可以调用 API 保存配置
-  console.log('保存配置:', config)
-  // 更新 mockData 中的数据
-  const index = mockData.data.findIndex(item => item.id === config.id)
-  if (index !== -1) {
-    mockData.data[index] = config
-  } else {
-    // 新建
-    config.id = Math.max(...mockData.data.map(item => item.id)) + 1
-    mockData.data.push(config)
+// 编辑配置
+const onEdit = async (id: number) => {
+  try {
+    loading.value = true
+    const response = await getConfigById(id)
+    if (response.code === 200) {
+      currentConfig.value = response.data
+      drawer.value = true
+    } else {
+      ElMessage.error(response.msg || '获取配置失败')
+    }
+  } catch (error) {
+    console.error('获取配置失败:', error)
+    ElMessage.error(error instanceof Error ? error.message : '获取配置失败')
+  } finally {
+    loading.value = false
   }
 }
 
+// 保存配置
+const handleSave = async (config: ServiceConfig) => {
+  try {
+    loading.value = true
+    let response
+    
+    if (config.id) {
+      // 更新配置
+      response = await updateConfig(config.id, {
+        name: config.name,
+        version: config.version,
+        status: config.status,
+        statusText: config.statusText,
+        description: config.description,
+        tools: config.tools,
+      })
+    } else {
+      // 创建配置
+      response = await createConfig({
+        name: config.name,
+        version: config.version,
+        status: config.status,
+        statusText: config.statusText,
+        description: config.description,
+        tools: config.tools,
+      })
+    }
+    
+    if (response.code === 200) {
+      ElMessage.success('保存成功')
+      drawer.value = false
+      await loadConfigs() // 重新加载列表
+    } else {
+      ElMessage.error(response.msg || '保存失败')
+    }
+  } catch (error) {
+    console.error('保存配置失败:', error)
+    ElMessage.error(error instanceof Error ? error.message : '保存失败')
+  } finally {
+    loading.value = false
+  }
+}
+
+// 添加配置
 const onAdd = () => {
   currentConfig.value = null
   drawer.value = true
 }
+
+// 组件挂载时加载数据
+onMounted(() => {
+  loadConfigs()
+})
 </script>
 
 <template>
