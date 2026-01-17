@@ -95,12 +95,14 @@ function createMcpServerFactory(config: Selectable<ConfigsTable> & { tools: Sele
             outputSchema,
           },
           async ({ input }) => {
+            consola.debug(`[MCP][${config.name}] 工具调用: ${tool.name}`, { input });
             // TODO: 实现实际的工具回调逻辑
             return {
               content: [{ type: 'text', text: `测试: ${JSON.stringify(input)}` }],
             };
           }
         );
+        consola.debug(`[MCP][${config.name}] 工具注册成功: ${tool.name}`);
       } catch (error) {
         consola.error(`[MCP][${config.name}] 注册工具 ${tool.name} 失败:`, error);
         consola.error(`  输入 schema: ${tool.input_schema}`);
@@ -119,14 +121,22 @@ function createMcpServerFactory(config: Selectable<ConfigsTable> & { tools: Sele
  * 批量创建 MCP 服务并返回 handlers 映射
  */
 export async function createMcpServices(): Promise<Map<number, McpHandlers>> {
+  const startTime = Date.now();
+  consola.info('[MCP] 开始批量创建 MCP 服务');
+  
   const databaseClient = await getDatabaseClient();
   const allConfigsWithTools = await databaseClient.getAllConfigsWithTools();
+  
+  consola.info(`[MCP] 从数据库加载配置总数: ${allConfigsWithTools.length}`);
 
   const handlersMap = new Map<number, McpHandlers>();
   let successCount = 0;
   let skipCount = 0;
+  let errorCount = 0;
 
   for (const config of allConfigsWithTools) {
+    consola.debug(`[MCP] 处理配置: name=${config.name}, id=${config.id}, status=${config.status}, tools=${config.tools.length}`);
+    
     if (!config.id) {
       consola.warn(`[MCP] 配置 "${config.name}" 缺少 ID，跳过`);
       skipCount++;
@@ -134,32 +144,52 @@ export async function createMcpServices(): Promise<Map<number, McpHandlers>> {
     }
 
     if (config.status !== StatusEnum.RUNNING) {
-      consola.warn(`[MCP] 配置 "${config.name}" 状态为 "${config.status}"，跳过`);
+      consola.debug(`[MCP] 配置 "${config.name}" (ID: ${config.id}) 状态为 "${config.status}"，跳过`);
       skipCount++;
       continue;
     }
 
     try {
+      consola.info(`[MCP] 开始创建服务: ${config.name} (ID: ${config.id}, version: ${config.version})`);
       const serverFactory = createMcpServerFactory(config);
       const handlers = sseHandlers(serverFactory, {
         onError: (error: Error, sessionId?: string) => {
-          consola.error(`[SSE][${config.name}][${sessionId || 'unknown'}]`, error);
+          consola.error(`[SSE][${config.name}][${sessionId || 'unknown'}] 错误:`, {
+            message: error.message,
+            name: error.name,
+            stack: error.stack,
+          });
         },
         onClose: (sessionId: string) => {
-          consola.log(`[SSE][${config.name}] 连接关闭: ${sessionId}`);
+          consola.debug(`[SSE][${config.name}] 连接关闭: sessionId=${sessionId}`);
         },
       });
 
       handlersMap.set(config.id, handlers);
       successCount++;
-      consola.success(`[MCP] 已加载配置: ${config.name} (ID: ${config.id}, 工具数: ${config.tools.length})`);
+      consola.success(`[MCP] 成功创建服务: ${config.name} (ID: ${config.id}, 工具数: ${config.tools.length}, 版本: ${config.version})`);
+      if (config.tools.length > 0) {
+        consola.debug(`[MCP] 工具列表: ${config.tools.map(t => t.name).join(', ')}`);
+      }
     } catch (error) {
-      consola.error(`[MCP] 加载配置 "${config.name}" (ID: ${config.id}) 失败:`, error);
+      errorCount++;
+      consola.error(`[MCP] 创建服务失败: ${config.name} (ID: ${config.id})`, {
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+      });
       skipCount++;
     }
   }
 
-  consola.info(`[MCP] 服务初始化完成: 成功 ${successCount} 个, 跳过 ${skipCount} 个`);
+  const duration = Date.now() - startTime;
+  consola.success(`[MCP] 服务初始化完成 (耗时: ${duration}ms)`);
+  consola.info(`[MCP] 统计信息: 成功=${successCount} 个, 跳过=${skipCount} 个, 失败=${errorCount} 个, 总数=${allConfigsWithTools.length}`);
+  
+  if (successCount > 0) {
+    const serviceIds = Array.from(handlersMap.keys()).join(', ');
+    consola.info(`[MCP] 当前活跃服务 ID: ${serviceIds}`);
+  }
+  
   return handlersMap;
 }
 
@@ -167,11 +197,35 @@ export async function createMcpServices(): Promise<Map<number, McpHandlers>> {
  * 刷新 MCP 服务（重新加载所有配置）
  */
 export async function refreshMcpServices(handlersMap: Map<number, McpHandlers>): Promise<void> {
+  const startTime = Date.now();
+  const oldSize = handlersMap.size;
+  const oldIds = Array.from(handlersMap.keys());
+  
+  consola.info(`[MCP] 开始刷新 MCP 服务 (当前服务数: ${oldSize})`);
+  
   handlersMap.clear();
   const newHandlersMap = await createMcpServices();
+  
   newHandlersMap.forEach((handlers, id) => {
     handlersMap.set(id, handlers);
   });
+  
+  const newSize = handlersMap.size;
+  const newIds = Array.from(handlersMap.keys());
+  const duration = Date.now() - startTime;
+  
+  const addedIds = newIds.filter(id => !oldIds.includes(id));
+  const removedIds = oldIds.filter(id => !newIds.includes(id));
+  
+  consola.success(`[MCP] 服务刷新完成 (耗时: ${duration}ms)`);
+  consola.info(`[MCP] 刷新前: ${oldSize} 个服务, 刷新后: ${newSize} 个服务`);
+  
+  if (addedIds.length > 0) {
+    consola.info(`[MCP] 新增服务 ID: ${addedIds.join(', ')}`);
+  }
+  if (removedIds.length > 0) {
+    consola.info(`[MCP] 移除服务 ID: ${removedIds.join(', ')}`);
+  }
 }
 
 // ==================== MCP 路由处理 ====================

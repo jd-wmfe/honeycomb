@@ -76,10 +76,23 @@ export function handleError(
   context?: string
 ): void {
   const errorMsg = error instanceof Error ? error.message : defaultMsg;
+  const errorName = error instanceof Error ? error.name : 'UnknownError';
+  const errorStack = error instanceof Error ? error.stack : undefined;
+  
   if (context) {
-    consola.error(`[API] ${context}:`, error);
+    consola.error(`[API] ${context}:`, {
+      message: errorMsg,
+      name: errorName,
+      stack: errorStack,
+      originalError: error,
+    });
   } else {
-    consola.error('[API] 操作失败:', error);
+    consola.error('[API] 操作失败:', {
+      message: errorMsg,
+      name: errorName,
+      stack: errorStack,
+      originalError: error,
+    });
   }
   res.status(500).json(createErrorResponse(500, errorMsg, error as Error));
 }

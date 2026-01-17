@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import consola from 'consola'
 
 const activeIndex = ref('1')
 
 const handleSelect = (key: string) => {
+  const previousIndex = activeIndex.value
   activeIndex.value = key
+  consola.debug(`[Client] 菜单切换: ${previousIndex} -> ${key}`)
   // 这里可以根据key进行页面切换
-  console.log('选中菜单:', key)
 }
 </script>
 

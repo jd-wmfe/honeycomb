@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import consola from 'consola'
 import EditDrawer from './EditDrawer.vue'
 import {
   getConfigs,
@@ -16,7 +17,7 @@ import { StatusEnum } from '@jd-wmfe/honeycomb-type'
 
 const activeIndex = ref('1')
 const handleSelect = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath)
+  consola.debug(`[Client] 菜单选择: key=${key}, keyPath=[${keyPath.join(' > ')}]`)
 }
 
 const drawer = ref(false)
@@ -61,16 +62,33 @@ const filteredData = computed(() => {
 
 // 加载配置列表
 const loadConfigs = async () => {
+  const startTime = Date.now()
   loading.value = true
+  consola.info('[Client] 开始加载配置列表')
+  
   try {
     const response = await getConfigs()
+    const duration = Date.now() - startTime
+    
     if (response.code === 200) {
       configs.value = response.data
+      const total = response.data.length
+      const running = response.data.filter((c: ServiceConfig) => c.status === StatusEnum.RUNNING).length
+      const stopped = response.data.filter((c: ServiceConfig) => c.status === StatusEnum.STOPPED).length
+      const totalTools = response.data.reduce((sum: number, c: ServiceConfig) => sum + c.tools.length, 0)
+      
+      consola.success(`[Client] 配置列表加载成功 (耗时: ${duration}ms)`)
+      consola.info(`[Client] 统计: 总数=${total}, 运行中=${running}, 已停止=${stopped}, 工具数=${totalTools}`)
     } else {
+      consola.error(`[Client] 获取配置列表失败: code=${response.code}, msg=${response.msg}`)
       ElMessage.error(response.msg || '获取配置列表失败')
     }
   } catch (error) {
-    console.error('加载配置列表失败:', error)
+    const duration = Date.now() - startTime
+    consola.error(`[Client] 加载配置列表异常 (耗时: ${duration}ms):`, {
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    })
     ElMessage.error(error instanceof Error ? error.message : '加载配置列表失败')
   } finally {
     loading.value = false
@@ -79,12 +97,19 @@ const loadConfigs = async () => {
 
 // 刷新数据
 const handleRefresh = async () => {
+  const startTime = Date.now()
+  consola.info('[Client] 用户触发刷新操作')
   await loadConfigs()
+  const duration = Date.now() - startTime
+  consola.success(`[Client] 刷新操作完成 (耗时: ${duration}ms)`)
   ElMessage.success('刷新成功')
 }
 
 // 启动服务
 const onStart = (id: number) => {
+  const config = configs.value.find(c => c.id === id)
+  consola.info(`[Client] 用户请求启动服务: id=${id}, name=${config?.name || 'unknown'}`)
+  
   ElMessageBox.confirm(
     '确定要启动该服务吗？',
     '提示',
@@ -95,26 +120,41 @@ const onStart = (id: number) => {
     }
   )
     .then(async () => {
+      const startTime = Date.now()
+      consola.info(`[Client] 用户确认启动服务: id=${id}`)
+      
       try {
         const response = await startConfig(id)
+        const duration = Date.now() - startTime
+        
         if (response.code === 200) {
+          consola.success(`[Client] 服务启动成功 (耗时: ${duration}ms): id=${id}, name=${response.data?.name || 'unknown'}`)
           ElMessage.success('启动成功')
           await loadConfigs() // 重新加载列表
         } else {
+          consola.error(`[Client] 服务启动失败: id=${id}, code=${response.code}, msg=${response.msg}`)
           ElMessage.error(response.msg || '启动失败')
         }
       } catch (error) {
-        console.error('启动服务失败:', error)
+        const duration = Date.now() - startTime
+        consola.error(`[Client] 启动服务异常 (耗时: ${duration}ms):`, {
+          id,
+          error: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : undefined,
+        })
         ElMessage.error(error instanceof Error ? error.message : '启动失败')
       }
     })
     .catch(() => {
-      // 用户取消
+      consola.debug(`[Client] 用户取消启动服务: id=${id}`)
     })
 }
 
 // 停止服务
 const onStop = (id: number) => {
+  const config = configs.value.find(c => c.id === id)
+  consola.info(`[Client] 用户请求停止服务: id=${id}, name=${config?.name || 'unknown'}`)
+  
   ElMessageBox.confirm(
     '确定要停止该服务吗？',
     '提示',
@@ -125,26 +165,41 @@ const onStop = (id: number) => {
     }
   )
     .then(async () => {
+      const startTime = Date.now()
+      consola.info(`[Client] 用户确认停止服务: id=${id}`)
+      
       try {
         const response = await stopConfig(id)
+        const duration = Date.now() - startTime
+        
         if (response.code === 200) {
+          consola.success(`[Client] 服务停止成功 (耗时: ${duration}ms): id=${id}, name=${response.data?.name || 'unknown'}`)
           ElMessage.success('停止成功')
           await loadConfigs() // 重新加载列表
         } else {
+          consola.error(`[Client] 服务停止失败: id=${id}, code=${response.code}, msg=${response.msg}`)
           ElMessage.error(response.msg || '停止失败')
         }
       } catch (error) {
-        console.error('停止服务失败:', error)
+        const duration = Date.now() - startTime
+        consola.error(`[Client] 停止服务异常 (耗时: ${duration}ms):`, {
+          id,
+          error: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : undefined,
+        })
         ElMessage.error(error instanceof Error ? error.message : '停止失败')
       }
     })
     .catch(() => {
-      // 用户取消
+      consola.debug(`[Client] 用户取消停止服务: id=${id}`)
     })
 }
 
 // 删除服务
 const onDelete = (id: number) => {
+  const config = configs.value.find(c => c.id === id)
+  consola.info(`[Client] 用户请求删除服务: id=${id}, name=${config?.name || 'unknown'}`)
+  
   ElMessageBox.confirm(
     '确定要删除该服务吗？',
     '提示',
@@ -155,37 +210,62 @@ const onDelete = (id: number) => {
     }
   )
     .then(async () => {
+      const startTime = Date.now()
+      consola.warn(`[Client] 用户确认删除服务: id=${id}, name=${config?.name || 'unknown'}`)
+      
       try {
         const response = await deleteConfig(id)
+        const duration = Date.now() - startTime
+        
         if (response.code === 200) {
+          consola.success(`[Client] 服务删除成功 (耗时: ${duration}ms): id=${id}`)
           ElMessage.success('删除成功')
           await loadConfigs() // 重新加载列表
         } else {
+          consola.error(`[Client] 服务删除失败: id=${id}, code=${response.code}, msg=${response.msg}`)
           ElMessage.error(response.msg || '删除失败')
         }
       } catch (error) {
-        console.error('删除服务失败:', error)
+        const duration = Date.now() - startTime
+        consola.error(`[Client] 删除服务异常 (耗时: ${duration}ms):`, {
+          id,
+          error: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : undefined,
+        })
         ElMessage.error(error instanceof Error ? error.message : '删除失败')
       }
     })
     .catch(() => {
-      // 用户取消
+      consola.debug(`[Client] 用户取消删除服务: id=${id}`)
     })
 }
 
 // 编辑配置
 const onEdit = async (id: number) => {
+  const config = configs.value.find(c => c.id === id)
+  const startTime = Date.now()
+  consola.info(`[Client] 用户请求编辑配置: id=${id}, name=${config?.name || 'unknown'}`)
+  
   try {
     loading.value = true
     const response = await getConfigById(id)
+    const duration = Date.now() - startTime
+    
     if (response.code === 200) {
       currentConfig.value = response.data
       drawer.value = true
+      consola.success(`[Client] 配置加载成功 (耗时: ${duration}ms): id=${id}, name=${response.data?.name || 'unknown'}, tools=${response.data?.tools.length || 0}`)
     } else {
+      consola.error(`[Client] 获取配置失败: id=${id}, code=${response.code}, msg=${response.msg}`)
       ElMessage.error(response.msg || '获取配置失败')
     }
   } catch (error) {
-    console.error('获取配置失败:', error)
+    const duration = Date.now() - startTime
+    consola.error(`[Client] 获取配置异常 (耗时: ${duration}ms):`, {
+      id,
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    })
     ElMessage.error(error instanceof Error ? error.message : '获取配置失败')
   } finally {
     loading.value = false
@@ -194,12 +274,24 @@ const onEdit = async (id: number) => {
 
 // 保存配置
 const handleSave = async (config: ServiceConfig) => {
+  const startTime = Date.now()
+  const isUpdate = !!config.id
+  const action = isUpdate ? '更新' : '创建'
+  
+  consola.info(`[Client] 用户请求${action}配置:`, {
+    id: config.id || 'new',
+    name: config.name,
+    version: config.version,
+    toolsCount: config.tools.length,
+  })
+  
   try {
     loading.value = true
     let response
     
     if (config.id) {
       // 更新配置
+      consola.debug(`[Client] 执行更新配置: id=${config.id}`)
       response = await updateConfig(config.id, {
         name: config.name,
         version: config.version,
@@ -214,6 +306,7 @@ const handleSave = async (config: ServiceConfig) => {
       })
     } else {
       // 创建配置
+      consola.debug(`[Client] 执行创建配置: name=${config.name}`)
       response = await createConfig({
         name: config.name,
         version: config.version,
@@ -228,15 +321,26 @@ const handleSave = async (config: ServiceConfig) => {
       })
     }
     
+    const duration = Date.now() - startTime
+    
     if (response.code === 200) {
+      const resultId = response.data?.id || config.id || 'unknown'
+      consola.success(`[Client] 配置${action}成功 (耗时: ${duration}ms): id=${resultId}, name=${response.data?.name || config.name}`)
       ElMessage.success('保存成功')
       drawer.value = false
       await loadConfigs() // 重新加载列表
     } else {
+      consola.error(`[Client] 配置${action}失败: id=${config.id || 'new'}, code=${response.code}, msg=${response.msg}`)
       ElMessage.error(response.msg || '保存失败')
     }
   } catch (error) {
-    console.error('保存配置失败:', error)
+    const duration = Date.now() - startTime
+    consola.error(`[Client] 配置${action}异常 (耗时: ${duration}ms):`, {
+      id: config.id || 'new',
+      name: config.name,
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    })
     ElMessage.error(error instanceof Error ? error.message : '保存失败')
   } finally {
     loading.value = false
@@ -245,12 +349,14 @@ const handleSave = async (config: ServiceConfig) => {
 
 // 添加配置
 const onAdd = () => {
+  consola.info('[Client] 用户请求添加新配置')
   currentConfig.value = null
   drawer.value = true
 }
 
 // 组件挂载时加载数据
 onMounted(() => {
+  consola.info('[Client] 组件已挂载，开始加载初始数据')
   loadConfigs()
 })
 </script>
