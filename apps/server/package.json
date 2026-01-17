@@ -17,15 +17,11 @@
     "@jd-wmfe/honeycomb-database": "workspace:*",
     "@jd-wmfe/honeycomb-type": "workspace:*",
     "@modelcontextprotocol/sdk": "1.25.2",
-    "consola": "3.4.2",
     "express": "5.2.1",
-    "express-mcp-handler": "^0.3.0",
+    "express-mcp-handler": "0.3.0",
     "swagger-jsdoc": "6.2.8",
     "swagger-ui-express": "5.0.1",
-    "zod": "4.3.5",
-    "kysely": "0.28.9",
-    "kysely-wasm": "1.2.1",
-    "sql.js": "1.13.0"
+    "zod": "4.3.5"
   },
   "devDependencies": {
     "@types/express": "5.0.6"
