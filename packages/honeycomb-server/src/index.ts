@@ -32,23 +32,16 @@ try {
     consola.success("═══════════════════════════════════════════════════════");
   });
 
-  // 优雅关闭
-  const gracefulShutdown = (signal: string) => {
-    consola.info(`[${signal}] 收到关闭信号，开始优雅关闭...`);
-    server.close(() => {
-      consola.success("服务器已关闭");
-      process.exit(0);
-    });
+  // 关闭处理
+  process.on("SIGTERM", () => {
+    consola.info("[SIGTERM] 收到关闭信号");
+    process.exit(0);
+  });
 
-    // 强制关闭超时
-    setTimeout(() => {
-      consola.error("强制关闭服务器");
-      process.exit(1);
-    }, 10000);
-  };
-
-  process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
-  process.on("SIGINT", () => gracefulShutdown("SIGINT"));
+  process.on("SIGINT", () => {
+    consola.info("[SIGINT] 收到关闭信号");
+    process.exit(0);
+  });
 } catch (error) {
   consola.error("启动应用失败:", error);
   process.exit(1);
