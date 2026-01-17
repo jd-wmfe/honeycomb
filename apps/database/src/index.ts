@@ -2,30 +2,10 @@ import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import initSqlJs, { Database } from 'sql.js';
+import type { ConfigModel, ToolModel } from '@jd-wmfe/honeycomb-type';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const dbPath = join(__dirname, '../mcp.db');
-
-export interface ConfigRecord {
-  id?: number;
-  name: string;
-  version: string;
-  status: string;
-  status_text: string;
-  description: string;
-  created_at: string;
-  last_modified: string;
-}
-
-export interface ToolRecord {
-  id?: number;
-  config_id: number;
-  name: string;
-  description: string;
-  input_schema: string;
-  output_schema: string;
-  callback: string;
-}
 
 export class DatabaseClient {
   private db: Database | null = null;
@@ -70,19 +50,18 @@ export class DatabaseClient {
   /**
    * 创建配置
    */
-  async createConfig(config: Omit<ConfigRecord, 'id'>): Promise<number> {
+  async createConfig(config: Omit<ConfigModel, 'id'>): Promise<number> {
     if (!this.db) throw new Error('Database not initialized');
     
     const stmt = this.db.prepare(`
-      INSERT INTO configs (name, version, status, status_text, description, created_at, last_modified)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO configs (name, version, status, description, created_at, last_modified)
+      VALUES (?, ?, ?, ?, ?, ?)
     `);
     
     stmt.run([
       config.name,
       config.version,
       config.status,
-      config.status_text,
       config.description,
       config.created_at,
       config.last_modified,
@@ -97,7 +76,7 @@ export class DatabaseClient {
   /**
    * 根据 ID 查询配置
    */
-  async getConfigById(id: number): Promise<ConfigRecord | null> {
+  async getConfigById(id: number): Promise<ConfigModel | null> {
     if (!this.db) throw new Error('Database not initialized');
     
     const stmt = this.db.prepare('SELECT * FROM configs WHERE id = ?');
@@ -116,7 +95,6 @@ export class DatabaseClient {
       name: row.name as string,
       version: row.version as string,
       status: row.status as string,
-      status_text: row.status_text as string,
       description: row.description as string,
       created_at: row.created_at as string,
       last_modified: row.last_modified as string,
@@ -126,7 +104,7 @@ export class DatabaseClient {
   /**
    * 查询所有配置
    */
-  async getAllConfigs(): Promise<ConfigRecord[]> {
+  async getAllConfigs(): Promise<ConfigModel[]> {
     if (!this.db) throw new Error('Database not initialized');
     
     const result = this.db.exec('SELECT * FROM configs ORDER BY id');
@@ -137,17 +115,16 @@ export class DatabaseClient {
       name: row[1] as string,
       version: row[2] as string,
       status: row[3] as string,
-      status_text: row[4] as string,
-      description: row[5] as string,
-      created_at: row[6] as string,
-      last_modified: row[7] as string,
+      description: row[4] as string,
+      created_at: row[5] as string,
+      last_modified: row[6] as string,
     }));
   }
 
   /**
    * 更新配置
    */
-  async updateConfig(id: number, config: Partial<Omit<ConfigRecord, 'id'>>): Promise<boolean> {
+  async updateConfig(id: number, config: Partial<Omit<ConfigModel, 'id'>>): Promise<boolean> {
     if (!this.db) throw new Error('Database not initialized');
     
     const fields: string[] = [];
@@ -188,12 +165,12 @@ export class DatabaseClient {
   /**
    * 创建工具
    */
-  async createTool(tool: Omit<ToolRecord, 'id'>): Promise<number> {
+  async createTool(tool: Omit<ToolModel, 'id'>): Promise<number> {
     if (!this.db) throw new Error('Database not initialized');
     
     const stmt = this.db.prepare(`
-      INSERT INTO tools (config_id, name, description, input_schema, output_schema, callback)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO tools (config_id, name, description, input_schema, output_schema, callback, created_at, last_modified)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `);
     
     stmt.run([
@@ -203,6 +180,8 @@ export class DatabaseClient {
       tool.input_schema,
       tool.output_schema,
       tool.callback,
+      tool.created_at,
+      tool.last_modified,
     ]);
     
     stmt.free();
@@ -214,7 +193,7 @@ export class DatabaseClient {
   /**
    * 根据 ID 查询工具
    */
-  async getToolById(id: number): Promise<ToolRecord | null> {
+  async getToolById(id: number): Promise<ToolModel | null> {
     if (!this.db) throw new Error('Database not initialized');
     
     const stmt = this.db.prepare('SELECT * FROM tools WHERE id = ?');
@@ -236,19 +215,21 @@ export class DatabaseClient {
       input_schema: row.input_schema as string,
       output_schema: row.output_schema as string,
       callback: row.callback as string,
+      created_at: row.created_at as string,
+      last_modified: row.last_modified as string,
     };
   }
 
   /**
    * 根据配置 ID 查询所有工具
    */
-  async getToolsByConfigId(configId: number): Promise<ToolRecord[]> {
+  async getToolsByConfigId(configId: number): Promise<ToolModel[]> {
     if (!this.db) throw new Error('Database not initialized');
     
     const stmt = this.db.prepare('SELECT * FROM tools WHERE config_id = ? ORDER BY id');
     stmt.bind([configId]);
     
-    const tools: ToolRecord[] = [];
+    const tools: ToolModel[] = [];
     while (stmt.step()) {
       const row = stmt.getAsObject();
       tools.push({
@@ -259,6 +240,8 @@ export class DatabaseClient {
         input_schema: row.input_schema as string,
         output_schema: row.output_schema as string,
         callback: row.callback as string,
+        created_at: row.created_at as string,
+        last_modified: row.last_modified as string,
       });
     }
     
@@ -269,7 +252,7 @@ export class DatabaseClient {
   /**
    * 查询所有工具
    */
-  async getAllTools(): Promise<ToolRecord[]> {
+  async getAllTools(): Promise<ToolModel[]> {
     if (!this.db) throw new Error('Database not initialized');
     
     const result = this.db.exec('SELECT * FROM tools ORDER BY id');
@@ -283,13 +266,15 @@ export class DatabaseClient {
       input_schema: row[4] as string,
       output_schema: row[5] as string,
       callback: row[6] as string,
+      created_at: row[7] as string,
+      last_modified: row[8] as string,
     }));
   }
 
   /**
    * 更新工具
    */
-  async updateTool(id: number, tool: Partial<Omit<ToolRecord, 'id'>>): Promise<boolean> {
+  async updateTool(id: number, tool: Partial<Omit<ToolModel, 'id'>>): Promise<boolean> {
     if (!this.db) throw new Error('Database not initialized');
     
     const fields: string[] = [];
@@ -330,7 +315,7 @@ export class DatabaseClient {
   /**
    * 查询配置及其所有工具
    */
-  async getConfigWithTools(id: number): Promise<(ConfigRecord & { tools: ToolRecord[] }) | null> {
+  async getConfigWithTools(id: number): Promise<(ConfigModel & { tools: ToolModel[] }) | null> {
     const config = await this.getConfigById(id);
     if (!config) return null;
     
@@ -341,7 +326,7 @@ export class DatabaseClient {
   /**
    * 查询所有配置及其工具
    */
-  async getAllConfigsWithTools(): Promise<Array<ConfigRecord & { tools: ToolRecord[] }>> {
+  async getAllConfigsWithTools(): Promise<Array<ConfigModel & { tools: ToolModel[] }>> {
     const configs = await this.getAllConfigs();
     return Promise.all(
       configs.map(async (config) => {

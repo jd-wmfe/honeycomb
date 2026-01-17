@@ -21,6 +21,7 @@ try {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
       version TEXT NOT NULL,
+      status TEXT NOT NULL,
       description TEXT NOT NULL,
       created_at TEXT NOT NULL,
       last_modified TEXT NOT NULL,
@@ -34,6 +35,8 @@ try {
       input_schema TEXT NOT NULL,
       output_schema TEXT NOT NULL,
       callback TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      last_modified TEXT NOT NULL,
       FOREIGN KEY (config_id) REFERENCES configs(id) ON DELETE CASCADE,
       UNIQUE(id)
     );
@@ -44,13 +47,14 @@ try {
   const now = new Date().toISOString().replace('T', ' ').slice(0, 19);
   
   const insertConfig = db.prepare(`
-    INSERT INTO configs (name, version, description, created_at, last_modified)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO configs (name, version, status, description, created_at, last_modified)
+    VALUES (?, ?, ?, ?, ?, ?)
   `);
   
   insertConfig.run([
     'test-service',
     '1.0.0',
+    'active',
     'This is a test service configuration',
     now,
     now,
@@ -62,8 +66,8 @@ try {
   
   // 插入测试工具
   const insertTool = db.prepare(`
-    INSERT INTO tools (config_id, name, description, input_schema, output_schema, callback)
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO tools (config_id, name, description, input_schema, output_schema, callback, created_at, last_modified)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `);
   
   insertTool.run([
@@ -73,12 +77,15 @@ try {
     '{"message": {"type": "string", "description": "Test message"}}',
     '{"result": {"type": "string", "description": "Test result"}}',
     'async ({ message }) => { return { content: [{ type: "text", text: `Test: ${message}` }] }; }',
+    now,
+    now,
   ]);
 
   // 插入第二个测试配置（包含两个工具）
   insertConfig.run([
     'test-service-2',
     '2.0.0',
+    'active',
     'This is a second test service configuration',
     now,
     now,
@@ -96,6 +103,8 @@ try {
     '{"query": {"type": "string", "description": "Query string"}}',
     '{"response": {"type": "string", "description": "Response string"}}',
     'async ({ query }) => { return { content: [{ type: "text", text: `Query: ${query}` }] }; }',
+    now,
+    now,
   ]);
   
   // 为第二个配置插入第二个工具
@@ -106,6 +115,8 @@ try {
     '{"data": {"type": "string", "description": "Data to process"}}',
     '{"processed": {"type": "string", "description": "Processed data"}}',
     'async ({ data }) => { return { content: [{ type: "text", text: `Processed: ${data}` }] }; }',
+    now,
+    now,
   ]);
   
   // 在所有使用完成后释放 prepared statements

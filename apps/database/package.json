@@ -14,6 +14,7 @@
     "init-db": "node dist/init.mjs"
   },
   "dependencies": {
+    "@jd-wmfe/honeycomb-type": "workspace:*",
     "consola": "3.4.2",
     "sql.js": "1.13.0"
   },
