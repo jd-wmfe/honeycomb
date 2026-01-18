@@ -12,6 +12,9 @@
 - 📚 **API 文档**：集成 Swagger UI，提供完整的 API 文档
 - 💾 **本地数据持久化**：基于 SQL.js 的轻量级数据库，无需额外数据库服务
 - 🏗️ **Monorepo 架构**：使用 pnpm workspace + Turbo 构建的高效开发体验
+- 🧪 **完整的测试覆盖**：使用 Vitest 进行单元测试
+- 🔒 **类型安全**：全面使用 TypeScript，确保类型安全
+- 🎨 **代码质量保障**：集成 Biome、ESLint、Lefthook 等工具
 
 ## 🚀 快速开始
 
@@ -30,39 +33,30 @@ cd honeycomb
 # 安装依赖
 pnpm install
 
-# 开发模式（并行启动前端和后端）
-pnpm build
-cd packages/honeycomb-server && pnpm start
-cd packages/honeycomb-client && pnpm dev
-```
+# 初始化数据库
+pnpm init-db
 
-访问应用：
-- **Web 界面**：http://localhost:5173（开发模式）或 http://localhost:3002（生产模式）
-- **API 文档**：http://localhost:3002/api-docs
-
-### 生产构建
-
-```bash
-# 构建所有包
+# 构建项目
 pnpm build
 
-# 启动生产服务器
+# 启动服务
 pnpm start
 ```
 
-## 📦 技术栈
+访问应用：
+- **Web 界面**：http://0.0.0.0:3002
+- **API 文档**：http://0.0.0.0:3002/api-docs
 
-### 前端
-- Vue.js 3 + Element Plus + Vite + TypeScript
+### 开发模式
 
-### 后端
-- Express 5 + MCP SDK + Swagger UI + Zod
+```bash
+# 启动前端开发服务器（热重载）
+pnpm --filter=@betterhyq/honeycomb-client dev
 
-### 数据库
-- SQL.js + Kysely
-
-### 工具链
-- pnpm workspace + Turbo + Vitest + Biome
+# 启动后端开发服务器（需要先构建）
+pnpm build
+pnpm start
+```
 
 ## 🏗️ 项目结构
 
@@ -70,65 +64,113 @@ pnpm start
 honeycomb/
 ├── packages/
 │   ├── honeycomb-client/    # Vue.js 3 前端应用
+│   │   ├── src/
+│   │   │   ├── api/         # API 客户端
+│   │   │   ├── components/  # Vue 组件
+│   │   │   ├── composables/ # 组合式函数
+│   │   │   └── utils/       # 工具函数
+│   │   └── vite.config.ts   # Vite 配置
 │   ├── honeycomb-server/    # Express 服务器
+│   │   ├── src/
+│   │   │   ├── routes/      # API 路由
+│   │   │   ├── middleware/  # 中间件
+│   │   │   ├── config/      # 配置文件
+│   │   │   └── mcp.ts       # MCP 服务管理
+│   │   └── dist/            # 构建输出
 │   ├── honeycomb-db/        # 数据库模块（SQL.js + Kysely）
+│   │   └── src/
+│   │       ├── database.ts  # 数据库类型定义
+│   │       ├── init.ts      # 初始化脚本
+│   │       └── config.ts    # 数据库配置
 │   └── honeycomb-common/    # 共享 TypeScript 类型定义
+│       └── src/
+│           ├── dto.ts       # 数据传输对象
+│           ├── vo.ts        # 视图对象
+│           └── enum.ts      # 枚举类型
 ├── scripts/                 # 构建和版本管理脚本
+│   ├── version.mjs          # 版本管理脚本
+│   └── changelog.mjs       # 变更日志生成
 └── turbo.json               # Turbo 构建配置
 ```
 
-## 🛠️ 常用命令
+## 🛠️ 开发命令
 
 ```bash
-# 开发
-pnpm dev              # 并行启动所有开发服务
-pnpm build            # 构建所有包
-pnpm start            # 启动生产服务器
+# 安装依赖
+pnpm install
 
-# 代码质量
-pnpm lint             # 代码检查
-pnpm format           # 代码格式化
-pnpm check            # 类型检查
+# 构建所有包
+pnpm build
 
-# 测试
-pnpm test             # 运行所有测试
+# 运行测试
+pnpm test
 
-# 版本管理
-pnpm commit           # 规范化提交
-pnpm bumpp            # 交互式版本升级
-pnpm changelog        # 生成变更日志
+# 代码检查
+pnpm lint
+
+# 代码格式化
+pnpm format
+
+# 类型检查
+pnpm check
+
+# 清理构建产物
+pnpm clean
+
+# 规范化提交（使用 Commitizen）
+pnpm commit
+
+# 版本升级
+pnpm bumpp
+
+# 生成变更日志
+pnpm changelog
 ```
 
-## 📖 API 文档
+## 📦 技术栈
 
-启动服务后访问 http://localhost:3002/api-docs 查看完整的 API 文档。
+### 前端
+- **Vue.js 3.5** - 渐进式 JavaScript 框架
+- **Element Plus 2.13** - Vue 3 组件库
+- **Vite 7.3** - 下一代前端构建工具
+- **TypeScript 5.9** - 类型安全的 JavaScript
+- **Axios 1.13** - HTTP 客户端
+- **Highlight.js 11.11** - 代码高亮
 
-主要 API 端点：
-- `GET /api/configs` - 获取所有配置列表
-- `POST /api/config` - 创建新配置
-- `PUT /api/config/:id` - 更新配置
-- `DELETE /api/config/:id` - 删除配置
-- `POST /api/config/:id/start` - 启动 MCP 服务
-- `POST /api/config/:id/stop` - 停止 MCP 服务
+### 后端
+- **Express 5.2** - Web 应用框架
+- **MCP SDK 1.25** - Model Context Protocol SDK
+- **Swagger UI 5.0** - API 文档生成
+- **Zod 4.3** - TypeScript 优先的 Schema 验证
 
-## 📝 代码规范
+### 数据库
+- **SQL.js 1.13** - 内存 SQLite 数据库
+- **Kysely 0.28** - 类型安全的 SQL 查询构建器
+- **kysely-wasm 1.2** - Kysely WebAssembly 适配器
 
-项目使用 [Conventional Commits](https://www.conventionalcommits.org/) 规范，使用 `pnpm commit` 进行规范化提交。
+### 工具链
+- **pnpm 10.25** - 快速、节省磁盘空间的包管理器
+- **Turbo 2.7** - 高性能构建系统
+- **Biome 2.3** - 快速的代码格式化器和检查器
+- **Vitest 4.0** - 快速的单元测试框架
+- **Lefthook 2.0** - Git hooks 管理器
+- **Commitizen 4.3** - 规范化提交工具
 
-Git hooks 通过 Lefthook 管理，自动进行代码格式化和提交信息验证。
+## 📖 文档
 
-## 🤝 贡献指南
+- [架构说明](./ARCHITECTURE.md) - 详细的架构设计和技术实现
+- [贡献指南](./CONTRIBUTING.md) - 如何参与项目贡献
+- [行为准则](./CODE_OF_CONDUCT.md) - 社区行为规范
+- [变更日志](./CHANGELOG.md) - 版本更新记录
 
-1. Fork 本仓库
-2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
-3. 使用 `pnpm commit` 进行规范化提交
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 开启 Pull Request
+## 🤝 贡献
 
-## 📝 许可证
+我们欢迎所有形式的贡献！请查看 [贡献指南](./CONTRIBUTING.md) 了解详细信息。
 
-ISC
+## 📄 许可证
+
+本项目采用 [ISC](./LICENSE) 许可证。
 
 ---
 
-Made with ❤️ by JD WMFE Team
+Made with ❤️ by YONGQI
