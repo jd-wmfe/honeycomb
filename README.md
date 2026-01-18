@@ -27,7 +27,7 @@
 
 ```bash
 # 克隆项目
-git clone <repository-url>
+git clone https://github.com/betterhyq/honeycomb.git
 cd honeycomb
 
 # 安装依赖
