@@ -1,21 +1,52 @@
-# Security Policy
+# 安全策略
 
-## Supported Versions
+## 支持的版本
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
+以下列出了当前正在提供安全更新的项目版本。
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
+| 版本 | 支持状态          |
+| ---- | ----------------- |
+| 2.1.x | :white_check_mark: |
+| 2.0.x | :white_check_mark: |
+| 1.x   | :x:                |
+| < 1.0 | :x:                |
 
-## Reporting a Vulnerability
+## 报告安全漏洞
 
-Use this section to tell people how to report a vulnerability.
+我们非常重视 Honeycomb 项目的安全性。如果您发现了安全漏洞，我们鼓励您负责任地披露。
 
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+### 如何报告
+
+请通过以下方式报告安全漏洞：
+
+- **电子邮件**：[betterhyq@qq.com](mailto:betterhyq@qq.com)
+- **主题**：请在邮件主题中包含 "[SECURITY]" 前缀
+
+### 报告内容
+
+请在报告中包含以下信息：
+
+- 漏洞的详细描述
+- 重现步骤（如适用）
+- 潜在影响和严重程度
+- 建议的修复方案（如有）
+
+### 处理流程
+
+- **确认时间**：我们会在收到报告后的 **48 小时内**确认收到您的报告
+- **初步评估**：我们将在 **7 个工作日内**完成初步评估
+- **更新频率**：我们会定期向您更新漏洞的处理进展
+- **修复时间**：根据漏洞的严重程度，我们会在合理的时间内发布修复补丁
+- **公开披露**：在修复发布后，我们会与您协调公开披露的时间
+
+### 我们的承诺
+
+- 我们会认真对待每一个安全报告
+- 我们会及时响应并处理安全漏洞
+- 我们会感谢并认可负责任的安全研究人员（如果您希望被公开致谢）
+
+### 请勿公开披露
+
+在漏洞修复之前，请不要在公共论坛、问题跟踪器或邮件列表中公开披露安全漏洞。这有助于保护用户，并给我们时间开发和发布修复程序。
+
+感谢您帮助保持 Honeycomb 及其用户的安全！

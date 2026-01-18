@@ -1,32 +1,34 @@
-# Honeycomb Code of Conduct
+# Honeycomb 行为准则
 
-Like the technical community as a whole, the Honeycomb team and community is made up of a mixture of professionals and volunteers from all over the world, working on every aspect of the mission - including mentorship, teaching, and connecting people.
+与整个技术社区一样，Honeycomb 团队和社区由来自世界各地的专业人士和志愿者组成，致力于项目的各个方面——包括指导、教学和人际连接。
 
-Diversity is one of our huge strengths, but it can also lead to communication issues and unhappiness. To that end, we have a few ground rules that we ask people to adhere to. This code applies equally to founders, mentors and those seeking help and guidance.
+多样性是我们的巨大优势之一，但也可能导致沟通问题和不愉快。为此，我们制定了一些基本规则，希望每个人都能遵守。本准则同样适用于创始人、导师以及寻求帮助和指导的人。
 
-This isn’t an exhaustive list of things that you can’t do. Rather, take it in the spirit in which it’s intended - a guide to make it easier to enrich all of us and the technical communities in which we participate.
+这不是一份禁止事项的详尽清单。相反，请理解其初衷——这是一份指南，旨在让我们所有人以及我们参与的技术社区更加丰富。
 
-This code of conduct applies to all spaces managed by the Honeycomb project or . This includes IRC, the mailing lists, the issue tracker, DSF events, and any other forums created by the project team which the community uses for communication. In addition, violations of this code outside these spaces may affect a person's ability to participate within them.
+本行为准则适用于 Honeycomb 项目管理的所有空间。这包括 IRC、邮件列表、问题跟踪器、DSF 活动，以及项目团队为社区交流创建的任何其他论坛。此外，在这些空间之外违反本准则的行为可能会影响个人在这些空间内的参与。
 
-If you believe someone is violating the code of conduct, we ask that you report it by emailing [betterhyq@qq.com](mailto:betterhyq@qq.com). For more details please see our 
+如果您认为有人违反了行为准则，请通过邮件 [betterhyq@qq.com](mailto:betterhyq@qq.com) 向我们报告。更多详情请参阅我们的报告流程。
 
-- **Be friendly and patient.**
-- **Be welcoming.** We strive to be a community that welcomes and supports people of all backgrounds and identities. This includes, but is not limited to members of any race, ethnicity, culture, national origin, colour, immigration status, social and economic class, educational level, sex, sexual orientation, gender identity and expression, age, size, family status, political belief, religion, and mental and physical ability.
-- **Be considerate.** Your work will be used by other people, and you in turn will depend on the work of others. Any decision you take will affect users and colleagues, and you should take those consequences into account when making decisions. Remember that we're a world-wide community, so you might not be communicating in someone else's primary language.
-- **Be respectful.** Not all of us will agree all the time, but disagreement is no excuse for poor behavior and poor manners. We might all experience some frustration now and then, but we cannot allow that frustration to turn into a personal attack. It’s important to remember that a community where people feel uncomfortable or threatened is not a productive one. Members of the Honeycomb community should be respectful when dealing with other members as well as with people outside the Honeycomb community.
-- **Be careful in the words that you choose.** We are a community of professionals, and we conduct ourselves professionally. Be kind to others. Do not insult or put down other participants. Harassment and other exclusionary behavior aren't acceptable. This includes, but is not limited to: 
- - Violent threats or language directed against another person.
- - Discriminatory jokes and language.
- - Posting sexually explicit or violent material.
- - Posting (or threatening to post) other people's personally identifying information ("doxing").
- - Personal insults, especially those using racist or sexist terms.
- - Unwelcome sexual attention.
- - Advocating for, or encouraging, any of the above behavior.
- - Repeated harassment of others. In general, if someone asks you to stop, then stop.
-- **When we disagree, try to understand why.** Disagreements, both social and technical, happen all the time and Honeycomb is no exception. It is important that we resolve disagreements and differing views constructively. Remember that we’re different. The strength of Honeycomb comes from its varied community, people from a wide range of backgrounds. Different people have different perspectives on issues. Being unable to understand why someone holds a viewpoint doesn’t mean that they’re wrong. Don’t forget that it is human to err and blaming each other doesn’t get us anywhere. Instead, focus on helping to resolve issues and learning from mistakes.
+## 我们的标准
 
-Original text courtesy of the [Speak Up! project](http://web.archive.org/web/20141109123859/http://speakup.io/coc.html).
+- **友善和耐心。** 保持友好和耐心的态度，理解每个人都在学习和成长。
+- **欢迎包容。** 我们努力成为一个欢迎并支持各种背景和身份人士的社区。这包括但不限于：任何种族、民族、文化、国籍、肤色、移民身份、社会经济阶层、教育水平、性别、性取向、性别认同和表达、年龄、体型、家庭状况、政治信仰、宗教以及身心能力。
+- **体贴周到。** 您的工作将被他人使用，而您也会依赖他人的工作。您做出的任何决定都会影响用户和同事，在做出决定时应考虑这些后果。请记住，我们是一个全球性社区，您可能不是在用他人的母语进行交流。
+- **相互尊重。** 我们不可能总是意见一致，但分歧不能成为不良行为和粗鲁举止的借口。我们可能偶尔会感到沮丧，但不能让这种沮丧转化为人身攻击。重要的是要记住，一个让人们感到不舒服或受到威胁的社区不是一个富有成效的社区。Honeycomb 社区的成员在与其他成员以及 Honeycomb 社区外的人员打交道时应该保持尊重。
+- **注意措辞。** 我们是一个专业社区，我们以专业的方式行事。善待他人。不要侮辱或贬低其他参与者。骚扰和其他排他性行为是不可接受的。这包括但不限于：
+  - 针对他人的暴力威胁或语言。
+  - 歧视性笑话和语言。
+  - 发布色情或暴力内容。
+  - 发布（或威胁发布）他人的个人身份信息（"人肉搜索"）。
+  - 人身攻击，特别是使用种族主义或性别歧视术语的攻击。
+  - 不受欢迎的性关注。
+  - 倡导或鼓励上述任何行为。
+  - 反复骚扰他人。一般来说，如果有人要求您停止，请停止。
+- **出现分歧时，尝试理解原因。** 分歧，无论是社交还是技术方面的，总是会发生，Honeycomb 也不例外。重要的是我们要建设性地解决分歧和不同观点。请记住，我们各不相同。Honeycomb 的力量来自其多样化的社区，来自广泛背景的人们。不同的人对问题有不同的看法。无法理解某人为什么持有某种观点并不意味着他们是错的。不要忘记，人非圣贤，互相指责不会让我们取得任何进展。相反，专注于帮助解决问题并从错误中学习。
 
-## Questions?
+原文来自 [Speak Up! 项目](http://web.archive.org/web/20141109123859/http://speakup.io/coc.html)。
 
-If you have questions, please see . If that doesn't answer your questions, feel free to [contact us](mailto:betterhyq@qq.com).
+## 有问题？
+
+如果您有任何问题，请查看我们的常见问题解答。如果这不能回答您的问题，请随时[联系我们](mailto:betterhyq@qq.com)。
