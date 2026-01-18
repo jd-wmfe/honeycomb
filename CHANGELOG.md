@@ -1,3 +1,13 @@
+# [2.1.0](https://github.com/jd-wmfe/honeycomb/compare/v2.0.8...v2.1.0) (2026-01-18)
+
+
+### Features
+
+* 更新README ([a28da03](https://github.com/jd-wmfe/honeycomb/commit/a28da032b83711b549c2749ba10200b98f5173f0))
+* 更新全部信息 ([ca862bf](https://github.com/jd-wmfe/honeycomb/commit/ca862bfe6d7adfb404640d51849921e7075941a7))
+
+
+
 ## [2.0.8](https://github.com/jd-wmfe/honeycomb/compare/v2.0.7...v2.0.8) (2026-01-18)
 
 
