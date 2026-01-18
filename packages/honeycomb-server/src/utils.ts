@@ -2,9 +2,9 @@ import type {
 	CreateConfigDTO,
 	QueryConfigVO,
 	UpdateConfigDTO,
-} from "@jd-wmfe/honeycomb-common";
-import { StatusEnum, StatusTextMap } from "@jd-wmfe/honeycomb-common";
-import type { ConfigsTable, ToolsTable } from "@jd-wmfe/honeycomb-db";
+} from "@betterhyq/honeycomb-common";
+import { StatusEnum, StatusTextMap } from "@betterhyq/honeycomb-common";
+import type { ConfigsTable, ToolsTable } from "@betterhyq/honeycomb-db";
 import type { Selectable } from "kysely";
 
 // 数据库配置类型（包含工具列表）

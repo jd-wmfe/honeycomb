@@ -8,7 +8,7 @@ import {
 	startConfig,
 	stopConfig,
 } from "./configs";
-import { ApiEnum } from "@jd-wmfe/honeycomb-common";
+import { ApiEnum } from "@betterhyq/honeycomb-common";
 import * as requestModule from "../request";
 import * as urlModule from "../utils/url";
 

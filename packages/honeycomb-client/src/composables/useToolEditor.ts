@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-import type { QueryConfigVO } from "@jd-wmfe/honeycomb-common";
+import type { QueryConfigVO } from "@betterhyq/honeycomb-common";
 
 // Tool 类型（从 QueryConfigVO 中提取）
 type Tool = QueryConfigVO["tools"][number];

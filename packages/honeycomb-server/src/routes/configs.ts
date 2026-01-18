@@ -3,9 +3,9 @@ import type {
 	QueryConfigsVO,
 	QueryConfigVO,
 	UpdateConfigDTO,
-} from "@jd-wmfe/honeycomb-common";
-import { StatusEnum } from "@jd-wmfe/honeycomb-common";
-import { getDatabaseClient } from "@jd-wmfe/honeycomb-db";
+} from "@betterhyq/honeycomb-common";
+import { StatusEnum } from "@betterhyq/honeycomb-common";
+import { getDatabaseClient } from "@betterhyq/honeycomb-db";
 import consola from "consola";
 import type express from "express";
 import type { McpHandlers } from "../mcp";

@@ -4,8 +4,8 @@ import type {
 	QueryConfigVO,
 	CreateConfigDTO,
 	UpdateConfigDTO,
-} from "@jd-wmfe/honeycomb-common";
-import { ApiEnum } from "@jd-wmfe/honeycomb-common";
+} from "@betterhyq/honeycomb-common";
+import { ApiEnum } from "@betterhyq/honeycomb-common";
 import { replaceUrlParams } from "../utils/url";
 
 /**

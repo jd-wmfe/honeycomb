@@ -1,5 +1,5 @@
-import { StatusEnum } from "@jd-wmfe/honeycomb-common";
-import type { ConfigsTable, ToolsTable } from "@jd-wmfe/honeycomb-db";
+import { StatusEnum } from "@betterhyq/honeycomb-common";
+import type { ConfigsTable, ToolsTable } from "@betterhyq/honeycomb-db";
 import type { Selectable } from "kysely";
 import { describe, expect, it } from "vitest";
 import {

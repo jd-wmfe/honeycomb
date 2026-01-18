@@ -1,4 +1,4 @@
-import { ApiEnum } from "@jd-wmfe/honeycomb-common";
+import { ApiEnum } from "@betterhyq/honeycomb-common";
 import type express from "express";
 import type { McpHandlers } from "../mcp";
 import { asyncHandler } from "../middleware/errorHandler";

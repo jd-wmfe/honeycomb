@@ -1,5 +1,5 @@
 {
-	"name": "@jd-wmfe/honeycomb-client",
+	"name": "@betterhyq/honeycomb-client",
 	"version": "2.1.0",
 	"description": "",
 	"keywords": [],
@@ -17,7 +17,7 @@
 		"test": "vitest run"
 	},
 	"dependencies": {
-		"@jd-wmfe/honeycomb-common": "workspace:*",
+		"@betterhyq/honeycomb-common": "workspace:*",
 		"axios": "1.13.2",
 		"element-plus": "2.13.1",
 		"vue": "3.5.26"

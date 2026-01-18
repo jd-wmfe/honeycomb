@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { StatusEnum } from "@jd-wmfe/honeycomb-common";
+import { StatusEnum } from "@betterhyq/honeycomb-common";
 
 defineProps<{
 	loading: boolean;

@@ -1,5 +1,5 @@
 {
-	"name": "@jd-wmfe/honeycomb",
+	"name": "@betterhyq/honeycomb",
 	"version": "2.1.0",
 	"description": "基于 Model Context Protocol (MCP) 的服务配置管理平台，提供可视化的 MCP 服务配置和管理功能",
 	"keywords": [
@@ -25,7 +25,7 @@
 		"format": "turbo run format",
 		"lint": "turbo run lint",
 		"prepare": "lefthook install",
-		"start": "pnpm --filter=@jd-wmfe/honeycomb-server start",
+		"start": "pnpm --filter=@betterhyq/honeycomb-server start",
 		"test": "turbo run test"
 	},
 	"dependencies": {

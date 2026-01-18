@@ -1,6 +1,6 @@
-import { StatusEnum } from "@jd-wmfe/honeycomb-common";
-import type { ConfigsTable, ToolsTable } from "@jd-wmfe/honeycomb-db";
-import { getDatabaseClient } from "@jd-wmfe/honeycomb-db";
+import { StatusEnum } from "@betterhyq/honeycomb-common";
+import type { ConfigsTable, ToolsTable } from "@betterhyq/honeycomb-db";
+import { getDatabaseClient } from "@betterhyq/honeycomb-db";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import consola from "consola";
 import type express from "express";

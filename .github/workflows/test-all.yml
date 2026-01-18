@@ -32,6 +32,6 @@ jobs:
       - name: Build
         run: pnpm build
       - name: Init Database
-        run: pnpm --filter=@jd-wmfe/honeycomb-db init-db
+        run: pnpm --filter=@betterhyq/honeycomb-db init-db
       - name: Test
         run: pnpm run test

@@ -75,7 +75,7 @@ importers:
 
   packages/honeycomb-client:
     dependencies:
-      '@jd-wmfe/honeycomb-common':
+      '@betterhyq/honeycomb-common':
         specifier: workspace:*
         version: link:../honeycomb-common
       axios:
@@ -132,16 +132,16 @@ importers:
 
   packages/honeycomb-db:
     dependencies:
-      '@jd-wmfe/honeycomb-common':
+      '@betterhyq/honeycomb-common':
         specifier: workspace:*
         version: link:../honeycomb-common
 
   packages/honeycomb-server:
     dependencies:
-      '@jd-wmfe/honeycomb-common':
+      '@betterhyq/honeycomb-common':
         specifier: workspace:*
         version: link:../honeycomb-common
-      '@jd-wmfe/honeycomb-db':
+      '@betterhyq/honeycomb-db':
         specifier: workspace:*
         version: link:../honeycomb-db
       '@modelcontextprotocol/sdk':

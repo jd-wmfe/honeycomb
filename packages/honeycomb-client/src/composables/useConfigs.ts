@@ -2,7 +2,7 @@ import { ref, computed } from "vue";
 import consola from "consola";
 import { ElMessage } from "element-plus";
 import { getConfigs, type ServiceConfig } from "../api/configs";
-import { StatusEnum } from "@jd-wmfe/honeycomb-common";
+import { StatusEnum } from "@betterhyq/honeycomb-common";
 
 /**
  * 配置列表管理 composable

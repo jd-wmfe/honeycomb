@@ -1,4 +1,4 @@
-import { StatusEnum } from "@jd-wmfe/honeycomb-common";
+import { StatusEnum } from "@betterhyq/honeycomb-common";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { DatabaseClient, getDatabaseClient } from "./index.js";
 
