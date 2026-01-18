@@ -2,7 +2,15 @@ pre-commit:
   parallel: true
   commands:
     format:
-      run: pnpm exec biome format --write {staged_files}
+      run: |
+        output=$(pnpm exec biome format --write {staged_files} 2>&1)
+        exit_code=$?
+        # 如果没有文件需要处理，跳过错误
+        if [ $exit_code -ne 0 ] && echo "$output" | grep -q "No files were processed"; then
+          exit 0
+        fi
+        echo "$output"
+        exit $exit_code
       stage_fixed: true
       glob: "*.{js,ts,json,md,yml,yaml,vue}"
       exclude: |
