@@ -4,12 +4,12 @@ import type { ServiceConfig } from "../api/configs";
 import { ElMessage } from "element-plus";
 import consola from "consola";
 
-const props = defineProps<{
+defineProps<{
 	loading: boolean;
 	data: ServiceConfig[];
 }>();
 
-const emit = defineEmits<{
+defineEmits<{
 	edit: [id: number];
 	start: [id: number];
 	stop: [id: number];
