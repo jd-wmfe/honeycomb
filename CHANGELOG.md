@@ -1,3 +1,17 @@
+## [2.0.8](https://github.com/jd-wmfe/honeycomb/compare/v2.0.7...v2.0.8) (2026-01-18)
+
+
+### Features
+
+* 优化命令脚本 ([10b2231](https://github.com/jd-wmfe/honeycomb/commit/10b223177afca5fab517c1be26852e79cdd55445))
+* 配置eslint插件 ([d7781a3](https://github.com/jd-wmfe/honeycomb/commit/d7781a3be6c844d3976a7de086a3e6845db75f5b))
+* 配置lintformatcheck ([0ad6ab3](https://github.com/jd-wmfe/honeycomb/commit/0ad6ab327388b570a5a8945c714af35b293c2ce6))
+* 配置lintformatcheck ([61121c2](https://github.com/jd-wmfe/honeycomb/commit/61121c2e1910d5a5ad83bd76a21219b650bae1cb))
+* 配置lintformatcheck ([5ed6bca](https://github.com/jd-wmfe/honeycomb/commit/5ed6bcab31ba49edf88482b9edffa4a94b586d51))
+* 配置lint和格式化 ([0956a41](https://github.com/jd-wmfe/honeycomb/commit/0956a4183cb874f0f2cf4ccc341ef77c75d794ad))
+
+
+
 ## [2.0.7](https://github.com/jd-wmfe/honeycomb/compare/v2.0.6...v2.0.7) (2026-01-17)
 
 ### Features
