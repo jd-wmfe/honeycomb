@@ -4,7 +4,7 @@
 			"name": "test-service-1",
 			"version": "1.0.0",
 			"status": "running",
-			"description": "First test service configuration",
+			"description": "First test service configurationFirst test service configurationFirst test service configurationFirst test service configurationFirst test service configurationFirst test service configuration",
 			"tools": [
 				{
 					"name": "query-tool",
