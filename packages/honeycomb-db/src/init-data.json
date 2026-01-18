@@ -1,0 +1,454 @@
+{
+	"configs": [
+		{
+			"name": "test-service-1",
+			"version": "1.0.0",
+			"status": "running",
+			"description": "First test service configuration",
+			"tools": [
+				{
+					"name": "query-tool",
+					"description": "Query processing tool",
+					"input_schema": "{\"query\": {\"type\": \"string\", \"description\": \"Query string\"}}",
+					"output_schema": "{\"response\": {\"type\": \"string\", \"description\": \"Response string\"}}",
+					"callback": "async ({ query }) => { return { content: [{ type: \"text\", text: `Query: ${query}` }] }; }"
+				},
+				{
+					"name": "process-tool",
+					"description": "Data processing tool",
+					"input_schema": "{\"data\": {\"type\": \"string\", \"description\": \"Data to process\"}}",
+					"output_schema": "{\"processed\": {\"type\": \"string\", \"description\": \"Processed data\"}}",
+					"callback": "async ({ data }) => { return { content: [{ type: \"text\", text: `Processed: ${data}` }] }; }"
+				}
+			]
+		},
+		{
+			"name": "test-service-2",
+			"version": "2.0.0",
+			"status": "stopped",
+			"description": "Second test service configuration",
+			"tools": [
+				{
+					"name": "transform-tool",
+					"description": "Data transformation tool",
+					"input_schema": "{\"input\": {\"type\": \"string\", \"description\": \"Input data\"}}",
+					"output_schema": "{\"output\": {\"type\": \"string\", \"description\": \"Transformed output\"}}",
+					"callback": "async ({ input }) => { return { content: [{ type: \"text\", text: `Transformed: ${input}` }] }; }"
+				}
+			]
+		},
+		{
+			"name": "test-service-3",
+			"version": "3.0.0",
+			"status": "running",
+			"description": "Third test service configuration",
+			"tools": [
+				{
+					"name": "validate-tool",
+					"description": "Data validation tool",
+					"input_schema": "{\"value\": {\"type\": \"string\", \"description\": \"Value to validate\"}}",
+					"output_schema": "{\"valid\": {\"type\": \"boolean\", \"description\": \"Validation result\"}}",
+					"callback": "async ({ value }) => { return { content: [{ type: \"text\", text: `Valid: ${value}` }] }; }"
+				},
+				{
+					"name": "analyze-tool",
+					"description": "Data analysis tool",
+					"input_schema": "{\"dataset\": {\"type\": \"string\", \"description\": \"Dataset to analyze\"}}",
+					"output_schema": "{\"analysis\": {\"type\": \"string\", \"description\": \"Analysis result\"}}",
+					"callback": "async ({ dataset }) => { return { content: [{ type: \"text\", text: `Analysis: ${dataset}` }] }; }"
+				}
+			]
+		},
+		{
+			"name": "test-service-4",
+			"version": "4.0.0",
+			"status": "pending",
+			"description": "Fourth test service configuration",
+			"tools": [
+				{
+					"name": "format-tool",
+					"description": "Data formatting tool",
+					"input_schema": "{\"content\": {\"type\": \"string\", \"description\": \"Content to format\"}}",
+					"output_schema": "{\"formatted\": {\"type\": \"string\", \"description\": \"Formatted content\"}}",
+					"callback": "async ({ content }) => { return { content: [{ type: \"text\", text: `Formatted: ${content}` }] }; }"
+				},
+				{
+					"name": "parse-tool",
+					"description": "Data parsing tool",
+					"input_schema": "{\"text\": {\"type\": \"string\", \"description\": \"Text to parse\"}}",
+					"output_schema": "{\"parsed\": {\"type\": \"object\", \"description\": \"Parsed result\"}}",
+					"callback": "async ({ text }) => { return { content: [{ type: \"text\", text: `Parsed: ${text}` }] }; }"
+				},
+				{
+					"name": "encode-tool",
+					"description": "Data encoding tool",
+					"input_schema": "{\"data\": {\"type\": \"string\", \"description\": \"Data to encode\"}}",
+					"output_schema": "{\"encoded\": {\"type\": \"string\", \"description\": \"Encoded data\"}}",
+					"callback": "async ({ data }) => { return { content: [{ type: \"text\", text: `Encoded: ${data}` }] }; }"
+				}
+			]
+		},
+		{
+			"name": "test-service-5",
+			"version": "5.0.0",
+			"status": "running",
+			"description": "Fifth test service configuration",
+			"tools": [
+				{
+					"name": "decode-tool",
+					"description": "Data decoding tool",
+					"input_schema": "{\"encoded\": {\"type\": \"string\", \"description\": \"Encoded data to decode\"}}",
+					"output_schema": "{\"decoded\": {\"type\": \"string\", \"description\": \"Decoded data\"}}",
+					"callback": "async ({ encoded }) => { return { content: [{ type: \"text\", text: `Decoded: ${encoded}` }] }; }"
+				}
+			]
+		},
+		{
+			"name": "test-service-6",
+			"version": "6.0.0",
+			"status": "stopped",
+			"description": "Sixth test service configuration",
+			"tools": [
+				{
+					"name": "filter-tool",
+					"description": "Data filtering tool",
+					"input_schema": "{\"items\": {\"type\": \"array\", \"description\": \"Items to filter\"}, \"criteria\": {\"type\": \"string\", \"description\": \"Filter criteria\"}}",
+					"output_schema": "{\"filtered\": {\"type\": \"array\", \"description\": \"Filtered items\"}}",
+					"callback": "async ({ items, criteria }) => { return { content: [{ type: \"text\", text: `Filtered: ${items.length} items by ${criteria}` }] }; }"
+				},
+				{
+					"name": "sort-tool",
+					"description": "Data sorting tool",
+					"input_schema": "{\"items\": {\"type\": \"array\", \"description\": \"Items to sort\"}, \"order\": {\"type\": \"string\", \"description\": \"Sort order\"}}",
+					"output_schema": "{\"sorted\": {\"type\": \"array\", \"description\": \"Sorted items\"}}",
+					"callback": "async ({ items, order }) => { return { content: [{ type: \"text\", text: `Sorted: ${items.length} items in ${order} order` }] }; }"
+				}
+			]
+		},
+		{
+			"name": "test-service-7",
+			"version": "7.0.0",
+			"status": "running",
+			"description": "Seventh test service configuration",
+			"tools": [
+				{
+					"name": "merge-tool",
+					"description": "Data merging tool",
+					"input_schema": "{\"data1\": {\"type\": \"object\", \"description\": \"First dataset\"}, \"data2\": {\"type\": \"object\", \"description\": \"Second dataset\"}}",
+					"output_schema": "{\"merged\": {\"type\": \"object\", \"description\": \"Merged data\"}}",
+					"callback": "async ({ data1, data2 }) => { return { content: [{ type: \"text\", text: `Merged datasets` }] }; }"
+				}
+			]
+		},
+		{
+			"name": "test-service-8",
+			"version": "8.0.0",
+			"status": "pending",
+			"description": "Eighth test service configuration",
+			"tools": [
+				{
+					"name": "split-tool",
+					"description": "Data splitting tool",
+					"input_schema": "{\"data\": {\"type\": \"string\", \"description\": \"Data to split\"}, \"delimiter\": {\"type\": \"string\", \"description\": \"Split delimiter\"}}",
+					"output_schema": "{\"parts\": {\"type\": \"array\", \"description\": \"Split parts\"}}",
+					"callback": "async ({ data, delimiter }) => { return { content: [{ type: \"text\", text: `Split data by ${delimiter}` }] }; }"
+				},
+				{
+					"name": "join-tool",
+					"description": "Data joining tool",
+					"input_schema": "{\"parts\": {\"type\": \"array\", \"description\": \"Parts to join\"}, \"separator\": {\"type\": \"string\", \"description\": \"Join separator\"}}",
+					"output_schema": "{\"joined\": {\"type\": \"string\", \"description\": \"Joined result\"}}",
+					"callback": "async ({ parts, separator }) => { return { content: [{ type: \"text\", text: `Joined ${parts.length} parts` }] }; }"
+				}
+			]
+		},
+		{
+			"name": "test-service-9",
+			"version": "9.0.0",
+			"status": "running",
+			"description": "Ninth test service configuration",
+			"tools": [
+				{
+					"name": "compress-tool",
+					"description": "Data compression tool",
+					"input_schema": "{\"data\": {\"type\": \"string\", \"description\": \"Data to compress\"}}",
+					"output_schema": "{\"compressed\": {\"type\": \"string\", \"description\": \"Compressed data\"}}",
+					"callback": "async ({ data }) => { return { content: [{ type: \"text\", text: `Compressed: ${data.length} bytes` }] }; }"
+				},
+				{
+					"name": "decompress-tool",
+					"description": "Data decompression tool",
+					"input_schema": "{\"compressed\": {\"type\": \"string\", \"description\": \"Compressed data\"}}",
+					"output_schema": "{\"decompressed\": {\"type\": \"string\", \"description\": \"Decompressed data\"}}",
+					"callback": "async ({ compressed }) => { return { content: [{ type: \"text\", text: `Decompressed data` }] }; }"
+				},
+				{
+					"name": "hash-tool",
+					"description": "Data hashing tool",
+					"input_schema": "{\"data\": {\"type\": \"string\", \"description\": \"Data to hash\"}}",
+					"output_schema": "{\"hash\": {\"type\": \"string\", \"description\": \"Hash value\"}}",
+					"callback": "async ({ data }) => { return { content: [{ type: \"text\", text: `Hash generated` }] }; }"
+				}
+			]
+		},
+		{
+			"name": "test-service-10",
+			"version": "10.0.0",
+			"status": "stopped",
+			"description": "Tenth test service configuration",
+			"tools": [
+				{
+					"name": "encrypt-tool",
+					"description": "Data encryption tool",
+					"input_schema": "{\"data\": {\"type\": \"string\", \"description\": \"Data to encrypt\"}, \"key\": {\"type\": \"string\", \"description\": \"Encryption key\"}}",
+					"output_schema": "{\"encrypted\": {\"type\": \"string\", \"description\": \"Encrypted data\"}}",
+					"callback": "async ({ data, key }) => { return { content: [{ type: \"text\", text: `Encrypted with key` }] }; }"
+				}
+			]
+		},
+		{
+			"name": "test-service-11",
+			"version": "11.0.0",
+			"status": "running",
+			"description": "Eleventh test service configuration",
+			"tools": [
+				{
+					"name": "decrypt-tool",
+					"description": "Data decryption tool",
+					"input_schema": "{\"encrypted\": {\"type\": \"string\", \"description\": \"Encrypted data\"}, \"key\": {\"type\": \"string\", \"description\": \"Decryption key\"}}",
+					"output_schema": "{\"decrypted\": {\"type\": \"string\", \"description\": \"Decrypted data\"}}",
+					"callback": "async ({ encrypted, key }) => { return { content: [{ type: \"text\", text: `Decrypted with key` }] }; }"
+				},
+				{
+					"name": "sign-tool",
+					"description": "Data signing tool",
+					"input_schema": "{\"data\": {\"type\": \"string\", \"description\": \"Data to sign\"}}",
+					"output_schema": "{\"signature\": {\"type\": \"string\", \"description\": \"Digital signature\"}}",
+					"callback": "async ({ data }) => { return { content: [{ type: \"text\", text: `Signed data` }] }; }"
+				}
+			]
+		},
+		{
+			"name": "test-service-12",
+			"version": "12.0.0",
+			"status": "pending",
+			"description": "Twelfth test service configuration",
+			"tools": [
+				{
+					"name": "verify-tool",
+					"description": "Signature verification tool",
+					"input_schema": "{\"data\": {\"type\": \"string\", \"description\": \"Data to verify\"}, \"signature\": {\"type\": \"string\", \"description\": \"Signature to verify\"}}",
+					"output_schema": "{\"verified\": {\"type\": \"boolean\", \"description\": \"Verification result\"}}",
+					"callback": "async ({ data, signature }) => { return { content: [{ type: \"text\", text: `Verified: ${signature}` }] }; }"
+				}
+			]
+		},
+		{
+			"name": "test-service-13",
+			"version": "13.0.0",
+			"status": "running",
+			"description": "Thirteenth test service configuration",
+			"tools": [
+				{
+					"name": "convert-tool",
+					"description": "Data format conversion tool",
+					"input_schema": "{\"data\": {\"type\": \"string\", \"description\": \"Data to convert\"}, \"format\": {\"type\": \"string\", \"description\": \"Target format\"}}",
+					"output_schema": "{\"converted\": {\"type\": \"string\", \"description\": \"Converted data\"}}",
+					"callback": "async ({ data, format }) => { return { content: [{ type: \"text\", text: `Converted to ${format}` }] }; }"
+				},
+				{
+					"name": "normalize-tool",
+					"description": "Data normalization tool",
+					"input_schema": "{\"data\": {\"type\": \"object\", \"description\": \"Data to normalize\"}}",
+					"output_schema": "{\"normalized\": {\"type\": \"object\", \"description\": \"Normalized data\"}}",
+					"callback": "async ({ data }) => { return { content: [{ type: \"text\", text: `Normalized data` }] }; }"
+				}
+			]
+		},
+		{
+			"name": "test-service-14",
+			"version": "14.0.0",
+			"status": "stopped",
+			"description": "Fourteenth test service configuration",
+			"tools": [
+				{
+					"name": "validate-schema-tool",
+					"description": "Schema validation tool",
+					"input_schema": "{\"data\": {\"type\": \"object\", \"description\": \"Data to validate\"}, \"schema\": {\"type\": \"object\", \"description\": \"Validation schema\"}}",
+					"output_schema": "{\"valid\": {\"type\": \"boolean\", \"description\": \"Validation result\"}}",
+					"callback": "async ({ data, schema }) => { return { content: [{ type: \"text\", text: `Schema validated` }] }; }"
+				}
+			]
+		},
+		{
+			"name": "test-service-15",
+			"version": "15.0.0",
+			"status": "running",
+			"description": "Fifteenth test service configuration",
+			"tools": [
+				{
+					"name": "extract-tool",
+					"description": "Data extraction tool",
+					"input_schema": "{\"source\": {\"type\": \"string\", \"description\": \"Source data\"}, \"pattern\": {\"type\": \"string\", \"description\": \"Extraction pattern\"}}",
+					"output_schema": "{\"extracted\": {\"type\": \"array\", \"description\": \"Extracted data\"}}",
+					"callback": "async ({ source, pattern }) => { return { content: [{ type: \"text\", text: `Extracted with pattern: ${pattern}` }] }; }"
+				},
+				{
+					"name": "replace-tool",
+					"description": "Data replacement tool",
+					"input_schema": "{\"text\": {\"type\": \"string\", \"description\": \"Text to process\"}, \"search\": {\"type\": \"string\", \"description\": \"Search pattern\"}, \"replace\": {\"type\": \"string\", \"description\": \"Replacement text\"}}",
+					"output_schema": "{\"result\": {\"type\": \"string\", \"description\": \"Replaced text\"}}",
+					"callback": "async ({ text, search, replace }) => { return { content: [{ type: \"text\", text: `Replaced ${search} with ${replace}` }] }; }"
+				}
+			]
+		},
+		{
+			"name": "test-service-16",
+			"version": "16.0.0",
+			"status": "pending",
+			"description": "Sixteenth test service configuration",
+			"tools": [
+				{
+					"name": "match-tool",
+					"description": "Pattern matching tool",
+					"input_schema": "{\"text\": {\"type\": \"string\", \"description\": \"Text to match\"}, \"pattern\": {\"type\": \"string\", \"description\": \"Match pattern\"}}",
+					"output_schema": "{\"matches\": {\"type\": \"array\", \"description\": \"Match results\"}}",
+					"callback": "async ({ text, pattern }) => { return { content: [{ type: \"text\", text: `Matched pattern: ${pattern}` }] }; }"
+				}
+			]
+		},
+		{
+			"name": "test-service-17",
+			"version": "17.0.0",
+			"status": "running",
+			"description": "Seventeenth test service configuration",
+			"tools": [
+				{
+					"name": "count-tool",
+					"description": "Data counting tool",
+					"input_schema": "{\"items\": {\"type\": \"array\", \"description\": \"Items to count\"}}",
+					"output_schema": "{\"count\": {\"type\": \"number\", \"description\": \"Item count\"}}",
+					"callback": "async ({ items }) => { return { content: [{ type: \"text\", text: `Count: ${items.length}` }] }; }"
+				},
+				{
+					"name": "sum-tool",
+					"description": "Data summation tool",
+					"input_schema": "{\"numbers\": {\"type\": \"array\", \"description\": \"Numbers to sum\"}}",
+					"output_schema": "{\"sum\": {\"type\": \"number\", \"description\": \"Sum result\"}}",
+					"callback": "async ({ numbers }) => { return { content: [{ type: \"text\", text: `Sum calculated` }] }; }"
+				}
+			]
+		},
+		{
+			"name": "test-service-18",
+			"version": "18.0.0",
+			"status": "stopped",
+			"description": "Eighteenth test service configuration",
+			"tools": [
+				{
+					"name": "average-tool",
+					"description": "Average calculation tool",
+					"input_schema": "{\"numbers\": {\"type\": \"array\", \"description\": \"Numbers to average\"}}",
+					"output_schema": "{\"average\": {\"type\": \"number\", \"description\": \"Average value\"}}",
+					"callback": "async ({ numbers }) => { return { content: [{ type: \"text\", text: `Average calculated` }] }; }"
+				}
+			]
+		},
+		{
+			"name": "test-service-19",
+			"version": "19.0.0",
+			"status": "running",
+			"description": "Nineteenth test service configuration",
+			"tools": [
+				{
+					"name": "min-tool",
+					"description": "Minimum value tool",
+					"input_schema": "{\"numbers\": {\"type\": \"array\", \"description\": \"Numbers to find minimum\"}}",
+					"output_schema": "{\"min\": {\"type\": \"number\", \"description\": \"Minimum value\"}}",
+					"callback": "async ({ numbers }) => { return { content: [{ type: \"text\", text: `Min value found` }] }; }"
+				},
+				{
+					"name": "max-tool",
+					"description": "Maximum value tool",
+					"input_schema": "{\"numbers\": {\"type\": \"array\", \"description\": \"Numbers to find maximum\"}}",
+					"output_schema": "{\"max\": {\"type\": \"number\", \"description\": \"Maximum value\"}}",
+					"callback": "async ({ numbers }) => { return { content: [{ type: \"text\", text: `Max value found` }] }; }"
+				}
+			]
+		},
+		{
+			"name": "test-service-20",
+			"version": "20.0.0",
+			"status": "pending",
+			"description": "Twentieth test service configuration",
+			"tools": [
+				{
+					"name": "unique-tool",
+					"description": "Unique values extraction tool",
+					"input_schema": "{\"items\": {\"type\": \"array\", \"description\": \"Items to find unique values\"}}",
+					"output_schema": "{\"unique\": {\"type\": \"array\", \"description\": \"Unique items\"}}",
+					"callback": "async ({ items }) => { return { content: [{ type: \"text\", text: `Unique items extracted` }] }; }"
+				}
+			]
+		},
+		{
+			"name": "test-service-21",
+			"version": "21.0.0",
+			"status": "running",
+			"description": "Twenty-first test service configuration",
+			"tools": [
+				{
+					"name": "group-tool",
+					"description": "Data grouping tool",
+					"input_schema": "{\"items\": {\"type\": \"array\", \"description\": \"Items to group\"}, \"key\": {\"type\": \"string\", \"description\": \"Grouping key\"}}",
+					"output_schema": "{\"grouped\": {\"type\": \"object\", \"description\": \"Grouped data\"}}",
+					"callback": "async ({ items, key }) => { return { content: [{ type: \"text\", text: `Grouped by ${key}` }] }; }"
+				},
+				{
+					"name": "aggregate-tool",
+					"description": "Data aggregation tool",
+					"input_schema": "{\"items\": {\"type\": \"array\", \"description\": \"Items to aggregate\"}, \"function\": {\"type\": \"string\", \"description\": \"Aggregation function\"}}",
+					"output_schema": "{\"result\": {\"type\": \"number\", \"description\": \"Aggregation result\"}}",
+					"callback": "async ({ items, function: fn }) => { return { content: [{ type: \"text\", text: `Aggregated with ${fn}` }] }; }"
+				}
+			]
+		},
+		{
+			"name": "test-service-22",
+			"version": "22.0.0",
+			"status": "stopped",
+			"description": "Twenty-second test service configuration",
+			"tools": [
+				{
+					"name": "sample-tool",
+					"description": "Data sampling tool",
+					"input_schema": "{\"items\": {\"type\": \"array\", \"description\": \"Items to sample\"}, \"size\": {\"type\": \"number\", \"description\": \"Sample size\"}}",
+					"output_schema": "{\"sample\": {\"type\": \"array\", \"description\": \"Sampled data\"}}",
+					"callback": "async ({ items, size }) => { return { content: [{ type: \"text\", text: `Sampled ${size} items` }] }; }"
+				}
+			]
+		},
+		{
+			"name": "test-service-23",
+			"version": "23.0.0",
+			"status": "running",
+			"description": "Twenty-third test service configuration",
+			"tools": [
+				{
+					"name": "shuffle-tool",
+					"description": "Data shuffling tool",
+					"input_schema": "{\"items\": {\"type\": \"array\", \"description\": \"Items to shuffle\"}}",
+					"output_schema": "{\"shuffled\": {\"type\": \"array\", \"description\": \"Shuffled items\"}}",
+					"callback": "async ({ items }) => { return { content: [{ type: \"text\", text: `Shuffled ${items.length} items` }] }; }"
+				},
+				{
+					"name": "reverse-tool",
+					"description": "Data reversal tool",
+					"input_schema": "{\"items\": {\"type\": \"array\", \"description\": \"Items to reverse\"}}",
+					"output_schema": "{\"reversed\": {\"type\": \"array\", \"description\": \"Reversed items\"}}",
+					"callback": "async ({ items }) => { return { content: [{ type: \"text\", text: `Reversed ${items.length} items` }] }; }"
+				}
+			]
+		}
+	]
+}

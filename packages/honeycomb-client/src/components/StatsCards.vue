@@ -68,29 +68,68 @@ defineProps<{
   position: relative;
   overflow: hidden;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--honeycomb-primary), var(--honeycomb-success));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.stat-card:hover::before {
+  opacity: 1;
 }
 
 .stat-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.stat-card-success::before {
+  background: linear-gradient(90deg, var(--honeycomb-success), #84fab0);
+}
+
+.stat-card-warning::before {
+  background: linear-gradient(90deg, var(--honeycomb-warning), #fbc2eb);
 }
 
 .stat-content {
   position: relative;
   z-index: 1;
+  padding: 8px 0;
 }
 
 .stat-value {
-  font-size: 32px;
-  font-weight: bold;
+  font-size: 36px;
+  font-weight: 700;
   color: #303133;
   margin-bottom: 8px;
+  line-height: 1.2;
+  background: linear-gradient(135deg, #303133 0%, #606266 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transition: all 0.3s;
+}
+
+.stat-card:hover .stat-value {
+  transform: scale(1.05);
 }
 
 .stat-label {
   font-size: 14px;
   color: #909399;
+  font-weight: 500;
+  letter-spacing: 0.5px;
 }
 
 .stat-icon {
@@ -98,14 +137,61 @@ defineProps<{
   right: 20px;
   top: 50%;
   transform: translateY(-50%);
-  opacity: 0.3;
+  opacity: 0.25;
+  transition: all 0.3s;
+  filter: blur(0.5px);
+}
+
+.stat-card:hover .stat-icon {
+  opacity: 0.4;
+  transform: translateY(-50%) scale(1.1) rotate(5deg);
+  filter: blur(0);
 }
 
 .stat-card-success .stat-value {
-  color: #67c23a;
+  background: linear-gradient(135deg, #67c23a 0%, #85ce61 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .stat-card-warning .stat-value {
-  color: #e6a23c;
+  background: linear-gradient(135deg, #e6a23c 0%, #ebb563 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* 响应式优化 */
+@media (max-width: 768px) {
+  .stat-value {
+    font-size: 28px;
+  }
+  
+  .stat-label {
+    font-size: 12px;
+  }
+  
+  .stat-icon {
+    right: 12px;
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stat-value {
+    font-size: 24px;
+  }
+  
+  .stat-label {
+    font-size: 11px;
+  }
+  
+  .stat-icon {
+    right: 8px;
+    width: 28px;
+    height: 28px;
+  }
 }
 </style>

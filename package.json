@@ -23,6 +23,7 @@
 		"clean": "turbo run clean && rm -rf node_modules",
 		"commit": "cz",
 		"format": "turbo run format",
+		"init-db": "pnpm --filter=@betterhyq/honeycomb-db init-db",
 		"lint": "turbo run lint",
 		"prepare": "lefthook install",
 		"start": "pnpm --filter=@betterhyq/honeycomb-server start",

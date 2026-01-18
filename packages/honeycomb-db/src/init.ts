@@ -1,5 +1,7 @@
 import "dotenv/config";
-import { unlinkSync, writeFileSync } from "node:fs";
+import { readFileSync, unlinkSync, writeFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, resolve } from "node:path";
 import consola from "consola";
 import { Kysely } from "kysely";
 import { SqlJsDialect } from "kysely-wasm";
@@ -69,99 +71,88 @@ try {
 	// 启用外键约束（直接在 sql.js Database 上执行）
 	sqliteDb.run("PRAGMA foreign_keys = ON");
 
-	// 插入测试数据
+	// 从JSON文件加载初始化数据
+	const __dirname = dirname(fileURLToPath(import.meta.url));
+	const initDataPath = resolve(__dirname, "init-data.json");
+	const initData = JSON.parse(readFileSync(initDataPath, "utf-8")) as {
+		configs: Array<{
+			name: string;
+			version: string;
+			status: string;
+			description: string;
+			tools?: Array<{
+				name: string;
+				description: string;
+				input_schema: string;
+				output_schema: string;
+				callback: string;
+			}>;
+		}>;
+	};
+
+	if (!initData.configs || initData.configs.length !== 23) {
+		throw new Error(
+			`初始化数据文件应包含23个配置，但实际包含 ${initData.configs?.length || 0} 个`,
+		);
+	}
+
+	// 插入测试数据 - 23个配置及其工具
 	const now = new Date().toISOString().replace("T", " ").slice(0, 19);
 
-	// 使用 Kysely 插入数据（类型安全）
-	const config1 = await db
-		.insertInto("configs")
-		.values({
-			name: "test-service",
-			version: "1.0.0",
-			status: "running",
-			description: "This is a test service configuration",
-			created_at: now,
-			last_modified: now,
-		})
-		.returning("id")
-		.executeTakeFirst();
+	// 插入所有配置和工具
+	const insertedConfigs: Array<{
+		id: number;
+		name: string;
+		toolCount: number;
+	}> = [];
+	let totalToolsInserted = 0;
 
-	const configId = config1?.id;
-	if (!configId) {
-		throw new Error("Failed to insert config");
+	for (const configData of initData.configs) {
+		// 插入配置
+		const config = await db
+			.insertInto("configs")
+			.values({
+				name: configData.name,
+				version: configData.version,
+				status: configData.status,
+				description: configData.description,
+				created_at: now,
+				last_modified: now,
+			})
+			.returning("id")
+			.executeTakeFirst();
+
+		if (!config?.id) {
+			throw new Error(`Failed to insert config: ${configData.name}`);
+		}
+
+		// 插入该配置下的工具
+		const toolCount = configData.tools?.length || 0;
+		if (configData.tools && configData.tools.length > 0) {
+			for (const toolData of configData.tools) {
+				await db
+					.insertInto("tools")
+					.values({
+						config_id: config.id,
+						name: toolData.name,
+						description: toolData.description,
+						input_schema: toolData.input_schema,
+						output_schema: toolData.output_schema,
+						callback: toolData.callback,
+						created_at: now,
+						last_modified: now,
+					})
+					.execute();
+				totalToolsInserted++;
+			}
+		}
+
+		insertedConfigs.push({
+			id: config.id,
+			name: configData.name,
+			toolCount,
+		});
 	}
-
-	await db
-		.insertInto("tools")
-		.values({
-			config_id: configId,
-			name: "test-tool",
-			description: "This is a test tool",
-			input_schema:
-				'{"message": {"type": "string", "description": "Test message"}}',
-			output_schema:
-				'{"result": {"type": "string", "description": "Test result"}}',
-			callback:
-				'async ({ message }) => { return { content: [{ type: "text", text: `Test: ${message}` }] }; }',
-			created_at: now,
-			last_modified: now,
-		})
-		.execute();
-
-	// 插入第二个测试配置（包含两个工具）
-	const config2 = await db
-		.insertInto("configs")
-		.values({
-			name: "test-service-2",
-			version: "2.0.0",
-			status: "stopped",
-			description: "This is a second test service configuration",
-			created_at: now,
-			last_modified: now,
-		})
-		.returning("id")
-		.executeTakeFirst();
-
-	const configId2 = config2?.id;
-	if (!configId2) {
-		throw new Error("Failed to insert second config");
-	}
-
-	// 为第二个配置插入第一个工具
-	await db
-		.insertInto("tools")
-		.values({
-			config_id: configId2,
-			name: "test-tool-1",
-			description: "This is the first tool for the second config",
-			input_schema:
-				'{"query": {"type": "string", "description": "Query string"}}',
-			output_schema:
-				'{"response": {"type": "string", "description": "Response string"}}',
-			callback:
-				'async ({ query }) => { return { content: [{ type: "text", text: `Query: ${query}` }] }; }',
-			created_at: now,
-			last_modified: now,
-		})
-		.execute();
-
-	// 为第二个配置插入第二个工具
-	await db
-		.insertInto("tools")
-		.values({
-			config_id: configId2,
-			name: "test-tool-2",
-			description: "This is the second tool for the second config",
-			input_schema:
-				'{"data": {"type": "string", "description": "Data to process"}}',
-			output_schema:
-				'{"processed": {"type": "string", "description": "Processed data"}}',
-			callback:
-				'async ({ data }) => { return { content: [{ type: "text", text: `Processed: ${data}` }] }; }',
-			created_at: now,
-			last_modified: now,
-		})
-		.execute();
 
 	// 导出数据库到文件
 	writeFileSync(dbPath, Buffer.from(sqliteDb.export()));
@@ -169,8 +160,9 @@ try {
 	// 关闭连接
 	await db.destroy();
 	consola.success(`数据库已创建: ${dbPath}`);
-	consola.info(`已插入第一个测试配置 (ID: ${configId}) 和 1 个工具`);
-	consola.info(`已插入第二个测试配置 (ID: ${configId2}) 和 2 个工具`);
+	consola.info(
+		`已插入 ${insertedConfigs.length} 个配置和 ${totalToolsInserted} 个工具`,
+	);
 } catch (error) {
 	consola.error("数据库初始化失败:", error);
 	process.exit(1);
