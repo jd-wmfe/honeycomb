@@ -169,7 +169,7 @@ onMounted(() => {
           :style="{ flex: 1 }"
         >
           <el-menu-item index="0">
-            <img style="width: 180px; height: auto;" src="/logo.svg" alt="Honeycomb Logo" />
+            <img class="logo-img" src="/logo.svg" alt="Honeycomb Logo" />
           </el-menu-item>
           <el-menu-item index="1">MCP 服务</el-menu-item>
           <el-menu-item index="2">
@@ -228,7 +228,7 @@ onMounted(() => {
           @delete="handleDelete"
         />
         <!-- 分页 -->
-        <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+        <el-space :size="16" style="width: 100%; margin-top: 20px" justify="space-between">
           <el-text type="info" size="small">
             共 {{ total }} 条记录
             <template v-if="searchKeyword || statusFilter"> （已过滤） </template>
@@ -241,7 +241,7 @@ onMounted(() => {
             :current-page="page"
             @current-change="handlePageChange"
           />
-        </div>
+        </el-space>
       </el-main>
     </el-container>
     <el-backtop :right="100" :bottom="100" />
@@ -253,5 +253,10 @@ onMounted(() => {
 <style scoped>
 .el-menu--horizontal > .el-menu-item:nth-child(1) {
   margin-right: auto;
+}
+
+.logo-img {
+  width: 180px;
+  height: auto;
 }
 </style>

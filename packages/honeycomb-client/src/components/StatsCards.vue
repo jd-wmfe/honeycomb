@@ -8,14 +8,14 @@ defineProps<{
 </script>
 
 <template>
-  <el-row :gutter="20" style="margin-bottom: 20px">
+  <el-row :gutter="20" class="stats-row">
     <el-col :xs="24" :sm="12" :md="6" :lg="6">
       <el-card shadow="hover">
         <div>
-          <div style="font-size: 36px; font-weight: 700; color: #303133; margin-bottom: 8px;">{{ totalServices }}</div>
-          <div style="font-size: 14px; color: #909399;">总服务数</div>
+          <div class="stat-number">{{ totalServices }}</div>
+          <div class="stat-title">总服务数</div>
         </div>
-        <el-icon :size="40" color="#409EFF" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); opacity: 0.25;">
+        <el-icon :size="40" color="#409EFF" class="stat-icon">
           <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
             <path
               fill="currentColor"
@@ -32,10 +32,10 @@ defineProps<{
     <el-col :xs="24" :sm="12" :md="6" :lg="6">
       <el-card shadow="hover">
         <div>
-          <div style="font-size: 36px; font-weight: 700; color: #67C23A; margin-bottom: 8px;">{{ runningServices }}</div>
-          <div style="font-size: 14px; color: #909399;">运行中</div>
+          <div class="stat-number stat-number--success">{{ runningServices }}</div>
+          <div class="stat-title">运行中</div>
         </div>
-        <el-icon :size="40" color="#67C23A" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); opacity: 0.25;">
+        <el-icon :size="40" color="#67C23A" class="stat-icon">
           <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
             <path
               fill="currentColor"
@@ -48,10 +48,10 @@ defineProps<{
     <el-col :xs="24" :sm="12" :md="6" :lg="6">
       <el-card shadow="hover">
         <div>
-          <div style="font-size: 36px; font-weight: 700; color: #E6A23C; margin-bottom: 8px;">{{ stoppedServices }}</div>
-          <div style="font-size: 14px; color: #909399;">已停止</div>
+          <div class="stat-number stat-number--warning">{{ stoppedServices }}</div>
+          <div class="stat-title">已停止</div>
         </div>
-        <el-icon :size="40" color="#E6A23C" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); opacity: 0.25;">
+        <el-icon :size="40" color="#E6A23C" class="stat-icon">
           <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
             <path
               fill="currentColor"
@@ -64,10 +64,10 @@ defineProps<{
     <el-col :xs="24" :sm="12" :md="6" :lg="6">
       <el-card shadow="hover">
         <div>
-          <div style="font-size: 36px; font-weight: 700; color: #909399; margin-bottom: 8px;">{{ totalTools ?? 0 }}</div>
-          <div style="font-size: 14px; color: #909399;">工具总数</div>
+          <div class="stat-number stat-number--info">{{ totalTools ?? 0 }}</div>
+          <div class="stat-title">工具总数</div>
         </div>
-        <el-icon :size="40" color="#909399" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); opacity: 0.25;">
+        <el-icon :size="40" color="#909399" class="stat-icon">
           <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
             <path
               fill="currentColor"
@@ -83,5 +83,39 @@ defineProps<{
 <style scoped>
 .el-card {
   position: relative;
+}
+
+.stats-row {
+  margin-bottom: 20px;
+}
+
+.stat-number {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.stat-number--success {
+  color: var(--el-color-success);
+}
+
+.stat-number--warning {
+  color: var(--el-color-warning);
+}
+
+.stat-number--info {
+  color: var(--el-text-color-secondary);
+}
+
+.stat-title {
+  font-size: 14px;
+}
+
+.stat-icon {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.25;
 }
 </style>

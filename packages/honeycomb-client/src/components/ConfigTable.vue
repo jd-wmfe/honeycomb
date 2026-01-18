@@ -170,12 +170,12 @@ const handleBatchDelete = async () => {
     <el-card
       v-if="selectedRows.length > 0"
       shadow="never"
-      style="margin-bottom: 15px"
+      class="batch-action-card"
     >
-      <div style="display: flex; justify-content: space-between; align-items: center">
-        <span style="color: #409eff; font-weight: 500">
+      <el-space :size="16" style="width: 100%" justify="space-between">
+        <el-text type="primary" style="font-weight: 500">
           已选择 {{ selectedRows.length }} 项
-        </span>
+        </el-text>
         <el-space>
           <el-button
             size="small"
@@ -203,13 +203,13 @@ const handleBatchDelete = async () => {
           </el-button>
           <el-button size="small" @click="selectedRows = []">取消选择</el-button>
         </el-space>
-      </div>
+      </el-space>
     </el-card>
 
     <el-table
       v-loading="loading"
       :data="data"
-      style="width: 100%"
+      class="config-table"
       stripe
       empty-text="暂无数据"
       :height="480"
@@ -230,44 +230,15 @@ const handleBatchDelete = async () => {
     <el-table-column property="tools" label="工具" width="400">
       <template #default="scope">
         <el-space wrap>
-          <el-popover
+          <el-tag
             v-for="tool in scope.row.tools"
             :key="tool.name"
-            placement="top"
-            :width="400"
-            trigger="hover"
+            type="info"
+            size="small"
+            effect="plain"
           >
-            <template #reference>
-              <el-tag
-                type="info"
-                size="small"
-                effect="plain"
-                style="cursor: pointer"
-              >
-                {{ tool.name }}
-              </el-tag>
-            </template>
-            <div>
-              <div style="margin-bottom: 8px">
-                <strong>工具名称：</strong>{{ tool.name }}
-              </div>
-              <div style="margin-bottom: 8px">
-                <strong>描述：</strong>{{ tool.description }}
-              </div>
-              <div v-if="tool.input_schema" style="margin-bottom: 8px">
-                <strong>输入 Schema：</strong>
-                <el-scrollbar height="100px">
-                  <pre style="margin: 0; font-size: 12px">{{ tool.input_schema }}</pre>
-                </el-scrollbar>
-              </div>
-              <div v-if="tool.output_schema">
-                <strong>输出 Schema：</strong>
-                <el-scrollbar height="100px">
-                  <pre style="margin: 0; font-size: 12px">{{ tool.output_schema }}</pre>
-                </el-scrollbar>
-              </div>
-            </div>
-          </el-popover>
+            {{ tool.name }}
+          </el-tag>
           <el-text v-if="scope.row.tools.length === 0" type="info" size="small">暂无工具</el-text>
         </el-space>
       </template>
@@ -306,13 +277,11 @@ const handleBatchDelete = async () => {
 </template>
 
 <style scoped>
-pre {
-  background-color: #f5f7fa;
-  padding: 8px;
-  border-radius: 4px;
-  font-family: "Courier New", monospace;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  margin: 0;
+.batch-action-card {
+  margin-bottom: 15px;
+}
+
+.config-table {
+  width: 100%;
 }
 </style>

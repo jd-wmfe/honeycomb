@@ -16,7 +16,7 @@ defineEmits<{
 </script>
 
 <template>
-  <el-card shadow="never" style="margin-bottom: 20px;">
+  <el-card shadow="never" class="search-filter-card">
     <el-row :gutter="16" align="middle">
       <el-col :xs="24" :sm="12" :md="12" :lg="12">
         <el-input
@@ -48,7 +48,7 @@ defineEmits<{
           @update:model-value="(val: string | null) => $emit('update:statusFilter', val)"
           placeholder="全部状态"
           clearable
-          style="width: 100%"
+          class="status-select"
         >
           <el-option label="全部状态" :value="null" />
           <el-option label="运行中" :value="StatusEnum.RUNNING" />
@@ -96,4 +96,11 @@ defineEmits<{
 </template>
 
 <style scoped>
+.search-filter-card {
+  margin-bottom: 20px;
+}
+
+.status-select {
+  width: 100%;
+}
 </style>

@@ -21,17 +21,19 @@ const stoppedPercent = computed(() =>
 // 饼图数据
 const pieData = computed(() => {
 	if (total.value === 0) {
-		return [{ value: 100, color: "#e4e7ed", label: "暂无数据" }];
+		return [
+			{ value: 100, color: "var(--el-border-color-light)", label: "暂无数据" },
+		];
 	}
 	return [
 		{
 			value: runningPercent.value,
-			color: "#67c23a",
+			color: "var(--el-color-success)",
 			label: `运行中 (${props.running})`,
 		},
 		{
 			value: stoppedPercent.value,
-			color: "#e6a23c",
+			color: "var(--el-color-warning)",
 			label: `已停止 (${props.stopped})`,
 		},
 	].filter((item) => item.value > 0);
@@ -115,10 +117,10 @@ const maxToolCountInTop = computed(() => {
 		<!-- 服务状态分布饼图 -->
 		<el-card shadow="hover" class="chart-card">
 			<template #header>
-				<div style="display: flex; justify-content: space-between; align-items: center">
-					<span style="font-weight: 600; font-size: 16px">服务状态分布</span>
+				<el-space :size="16" style="width: 100%" justify="space-between">
+					<span class="el-text el-text--primary" style="font-weight: 600; font-size: 16px">服务状态分布</span>
 					<el-tag type="info" size="small">总计: {{ total }}</el-tag>
-				</div>
+				</el-space>
 			</template>
 
 		<div v-if="total === 0" class="empty-chart">
@@ -132,7 +134,7 @@ const maxToolCountInTop = computed(() => {
 						cx="50"
 						cy="50"
 						r="50"
-						fill="#e4e7ed"
+						class="pie-background"
 					/>
 					<path
 						v-for="(item, index) in piePaths"
@@ -165,12 +167,12 @@ const maxToolCountInTop = computed(() => {
 					<div class="stat-item">
 						<div class="stat-label">运行中</div>
 						<div class="stat-bar">
-							<el-progress
-								:percentage="runningPercent"
-								:color="'#67c23a'"
-								:stroke-width="20"
-								:show-text="false"
-							/>
+						<el-progress
+							:percentage="runningPercent"
+							color="var(--el-color-success)"
+							:stroke-width="20"
+							:show-text="false"
+						/>
 						</div>
 						<div class="stat-value">{{ props.running }} ({{ runningPercent }}%)</div>
 					</div>
@@ -179,12 +181,12 @@ const maxToolCountInTop = computed(() => {
 					<div class="stat-item">
 						<div class="stat-label">已停止</div>
 						<div class="stat-bar">
-							<el-progress
-								:percentage="stoppedPercent"
-								:color="'#e6a23c'"
-								:stroke-width="20"
-								:show-text="false"
-							/>
+						<el-progress
+							:percentage="stoppedPercent"
+							color="var(--el-color-warning)"
+							:stroke-width="20"
+							:show-text="false"
+						/>
 						</div>
 						<div class="stat-value">{{ props.stopped }} ({{ stoppedPercent }}%)</div>
 					</div>
@@ -196,10 +198,10 @@ const maxToolCountInTop = computed(() => {
 		<!-- 工具数量分布柱状图 -->
 		<el-card v-if="props.configs && props.configs.length > 0" shadow="hover" class="chart-card">
 			<template #header>
-				<div style="display: flex; justify-content: space-between; align-items: center">
-					<span style="font-weight: 600; font-size: 16px">工具数量分布</span>
+				<el-space :size="16" style="width: 100%" justify="space-between">
+					<span class="el-text el-text--primary" style="font-weight: 600; font-size: 16px">工具数量分布</span>
 					<el-tag type="info" size="small">工具总数: {{ totalTools || 0 }}</el-tag>
-				</div>
+				</el-space>
 			</template>
 
 			<div v-if="toolsDistribution.length === 0" class="empty-chart">
@@ -218,7 +220,6 @@ const maxToolCountInTop = computed(() => {
 								class="bar"
 								:style="{
 									height: `${(item.serviceCount / maxToolCount) * 100}%`,
-									backgroundColor: '#409eff',
 								}"
 							></div>
 						</div>
@@ -232,9 +233,7 @@ const maxToolCountInTop = computed(() => {
 		<!-- 工具数量最多的服务排行 -->
 		<el-card v-if="props.configs && props.configs.length > 0" shadow="hover" class="chart-card">
 			<template #header>
-				<div style="display: flex; justify-content: space-between; align-items: center">
-					<span style="font-weight: 600; font-size: 16px">工具数量排行 (Top 5)</span>
-				</div>
+				<span class="el-text el-text--primary" style="font-weight: 600; font-size: 16px">工具数量排行 (Top 5)</span>
 			</template>
 
 			<div v-if="topServicesByTools.length === 0" class="empty-chart">
@@ -315,6 +314,22 @@ const maxToolCountInTop = computed(() => {
 	cursor: pointer;
 }
 
+.pie-background {
+	fill: var(--el-border-color-light);
+}
+
+.bar {
+	background-color: var(--el-color-primary);
+}
+
+.ranking-bar-wrapper {
+	background-color: var(--el-border-color-lighter);
+}
+
+.ranking-bar {
+	background-color: var(--el-color-primary);
+}
+
 .chart-legend {
 	flex: 1;
 	display: flex;
@@ -327,7 +342,6 @@ const maxToolCountInTop = computed(() => {
 	align-items: center;
 	gap: 10px;
 	padding: 8px;
-	border-radius: 4px;
 }
 
 .legend-color {
@@ -340,19 +354,16 @@ const maxToolCountInTop = computed(() => {
 .legend-label {
 	flex: 1;
 	font-size: 14px;
-	color: #606266;
 }
 
 .legend-value {
 	font-weight: 600;
-	color: #303133;
 	font-size: 14px;
 }
 
 .chart-stats {
 	margin-top: 20px;
 	padding-top: 20px;
-	border-top: 1px solid #ebeef5;
 }
 
 .stat-item {
@@ -363,7 +374,6 @@ const maxToolCountInTop = computed(() => {
 
 .stat-label {
 	font-size: 14px;
-	color: #909399;
 	font-weight: 500;
 }
 
@@ -374,7 +384,6 @@ const maxToolCountInTop = computed(() => {
 .stat-value {
 	font-size: 16px;
 	font-weight: 600;
-	color: #303133;
 }
 
 /* 响应式优化 */
@@ -432,14 +441,12 @@ const maxToolCountInTop = computed(() => {
 
 .bar-label {
 	font-size: 12px;
-	color: #909399;
 	text-align: center;
 }
 
 .bar-value {
 	font-size: 16px;
 	font-weight: 600;
-	color: #303133;
 }
 
 /* 排行列表样式 */
@@ -455,8 +462,6 @@ const maxToolCountInTop = computed(() => {
 	align-items: center;
 	gap: 12px;
 	padding: 12px;
-	border-radius: 8px;
-	background-color: #f5f7fa;
 }
 
 .ranking-number {
@@ -501,20 +506,17 @@ const maxToolCountInTop = computed(() => {
 .ranking-name {
 	font-size: 14px;
 	font-weight: 500;
-	color: #303133;
 }
 
 .ranking-bar-wrapper {
 	width: 100%;
 	height: 8px;
-	background-color: #e4e7ed;
 	border-radius: 4px;
 	overflow: hidden;
 }
 
 .ranking-bar {
 	height: 100%;
-	background: #409eff;
 	border-radius: 4px;
 }
 

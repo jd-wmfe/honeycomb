@@ -325,24 +325,26 @@ const getFormattedCallback = (callback: string): string => {
 
         <!-- 工具列表 -->
         <el-divider content-position="left">
-          <span>工具列表</span>
-          <el-button type="primary" size="small" style="margin-left: 10px" @click="addTool">
-            添加工具
-          </el-button>
+          <el-space :size="10">
+            <span>工具列表</span>
+            <el-button type="primary" size="small" @click="addTool">
+              添加工具
+            </el-button>
+          </el-space>
         </el-divider>
 
         <!-- 工具编辑表单 -->
-        <el-card v-if="editingToolIndex !== null" style="margin-bottom: 20px" shadow="hover">
+        <el-card v-if="editingToolIndex !== null" class="tool-edit-card" shadow="hover">
           <template #header>
-            <div style="display: flex; justify-content: space-between; align-items: center">
+            <el-space :size="16" style="width: 100%" justify="space-between">
               <span>{{
                 editingToolIndex === formData.tools.length ? "新增工具" : "编辑工具"
               }}</span>
-              <div>
+              <el-space :size="8">
                 <el-button size="small" @click="cancelEditTool">取消</el-button>
                 <el-button type="primary" size="small" @click="saveTool">保存</el-button>
-              </div>
-            </div>
+              </el-space>
+            </el-space>
           </template>
 
           <el-form :model="toolForm" label-width="100px">
@@ -365,7 +367,7 @@ const getFormattedCallback = (callback: string): string => {
                 type="textarea"
                 :rows="8"
                 placeholder="例如: JSON 格式的 Schema"
-                style="font-family: 'Courier New', monospace;"
+                class="code-textarea"
               />
             </el-form-item>
 
@@ -375,7 +377,7 @@ const getFormattedCallback = (callback: string): string => {
                 type="textarea"
                 :rows="8"
                 placeholder="例如: JSON 格式的 Schema"
-                style="font-family: 'Courier New', monospace;"
+                class="code-textarea"
               />
             </el-form-item>
 
@@ -385,7 +387,7 @@ const getFormattedCallback = (callback: string): string => {
                 type="textarea"
                 :rows="10"
                 placeholder="请输入回调函数代码"
-                style="font-family: 'Courier New', monospace;"
+                class="code-textarea"
               />
             </el-form-item>
           </el-form>
@@ -395,47 +397,47 @@ const getFormattedCallback = (callback: string): string => {
         <el-card
           v-for="(tool, index) in formData.tools"
           :key="index"
-          style="margin-bottom: 15px"
+          class="tool-display-card"
           shadow="hover"
         >
           <template #header>
-            <div style="display: flex; justify-content: space-between; align-items: center">
-              <div>
+            <el-space :size="16" style="width: 100%" justify="space-between">
+              <el-space :size="10">
                 <el-tag type="info" size="small">{{ tool.name }}</el-tag>
-                <span style="margin-left: 10px; color: #666">{{ tool.description }}</span>
-              </div>
-              <div>
+                <el-text type="info" size="small">{{ tool.description }}</el-text>
+              </el-space>
+              <el-space :size="8">
                 <el-button type="primary" size="small" link @click="editTool(index)">
                   编辑
                 </el-button>
                 <el-button type="danger" size="small" link @click="deleteTool(index)">
                   删除
                 </el-button>
-              </div>
-            </div>
+              </el-space>
+            </el-space>
           </template>
 
-          <div style="font-size: 12px;">
-            <div style="margin-bottom: 15px">
-              <div style="margin-bottom: 5px; font-weight: 600; color: #303133;">输入Schema:</div>
+          <div class="tool-detail">
+            <div class="tool-detail-item">
+              <div class="tool-detail-label">输入Schema:</div>
               <div v-if="tool.input_schema" class="code-block">
                 <pre><code class="language-json" v-html="highlightCode(getFormattedSchema(tool.input_schema), 'json')"></code></pre>
               </div>
-              <div v-else style="color: #999;">未设置</div>
+              <el-text v-else type="info" size="small">未设置</el-text>
             </div>
-            <div style="margin-bottom: 15px">
-              <div style="margin-bottom: 5px; font-weight: 600; color: #303133;">输出Schema:</div>
+            <div class="tool-detail-item">
+              <div class="tool-detail-label">输出Schema:</div>
               <div v-if="tool.output_schema" class="code-block">
                 <pre><code class="language-json" v-html="highlightCode(getFormattedSchema(tool.output_schema), 'json')"></code></pre>
               </div>
-              <div v-else style="color: #999;">未设置</div>
+              <el-text v-else type="info" size="small">未设置</el-text>
             </div>
-            <div>
-              <div style="margin-bottom: 5px; font-weight: 600; color: #303133;">回调函数:</div>
+            <div class="tool-detail-item">
+              <div class="tool-detail-label">回调函数:</div>
               <div v-if="tool.callback" class="code-block">
                 <pre><code class="language-javascript" v-html="highlightCode(getFormattedCallback(tool.callback), 'javascript')"></code></pre>
               </div>
-              <div v-else style="color: #999;">未设置</div>
+              <el-text v-else type="info" size="small">未设置</el-text>
             </div>
           </div>
         </el-card>
@@ -448,18 +450,45 @@ const getFormattedCallback = (callback: string): string => {
     </template>
 
     <template #footer>
-      <div style="display: flex; justify-content: flex-end; gap: 10px">
+      <el-space :size="10" style="width: 100%" justify="flex-end">
         <el-button @click="cancel">取消</el-button>
         <el-button type="primary" @click="saveConfig">保存</el-button>
-      </div>
+      </el-space>
     </template>
   </el-drawer>
 </template>
 
 <style scoped>
+.tool-edit-card {
+  margin-bottom: 20px;
+}
+
+.tool-display-card {
+  margin-bottom: 15px;
+}
+
+.code-textarea {
+  font-family: 'Courier New', monospace;
+}
+
+.tool-detail {
+  font-size: 12px;
+}
+
+.tool-detail-item {
+  margin-bottom: 15px;
+}
+
+.tool-detail-item:last-child {
+  margin-bottom: 0;
+}
+
+.tool-detail-label {
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
 .code-block {
-  background-color: #f6f8fa;
-  border: 1px solid #e1e4e8;
   border-radius: 4px;
   padding: 12px;
   overflow-x: auto;
@@ -474,7 +503,6 @@ const getFormattedCallback = (callback: string): string => {
   font-family: 'Courier New', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 12px;
   line-height: 1.5;
-  color: #24292e;
 }
 
 .code-block code {

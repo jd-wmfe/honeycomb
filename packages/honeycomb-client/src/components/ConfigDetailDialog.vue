@@ -95,23 +95,17 @@ const exportConfig = () => {
 			<el-card
 				v-for="(tool, index) in config.tools"
 				:key="index"
-				style="margin-bottom: 15px"
+				class="tool-card"
 				shadow="hover"
 			>
 				<template #header>
-					<div
-						style="
-							display: flex;
-							justify-content: space-between;
-							align-items: center;
-						"
-					>
-						<div>
+					<el-space :size="16" style="width: 100%" justify="space-between">
+						<el-space :size="10">
 							<el-tag type="primary" size="small">{{ tool.name }}</el-tag>
-							<span style="margin-left: 10px; color: #666">{{
+							<el-text type="info" size="small">{{
 								tool.description
-							}}</span>
-						</div>
+							}}</el-text>
+						</el-space>
 						<el-button
 							size="small"
 							link
@@ -120,7 +114,7 @@ const exportConfig = () => {
 						>
 							复制工具信息
 						</el-button>
-					</div>
+					</el-space>
 				</template>
 
 				<el-descriptions :column="1" border size="small">
@@ -132,7 +126,7 @@ const exportConfig = () => {
 					</el-descriptions-item>
 					<el-descriptions-item label="输入 Schema">
 						<el-scrollbar height="150px">
-							<pre style="margin: 0; font-size: 12px">{{
+							<pre class="schema-pre">{{
 								formatJson(tool.input_schema)
 							}}</pre>
 						</el-scrollbar>
@@ -140,7 +134,7 @@ const exportConfig = () => {
 							size="small"
 							link
 							type="primary"
-							style="margin-top: 5px"
+							class="copy-button"
 							@click="copyToClipboard(tool.input_schema)"
 						>
 							复制
@@ -148,7 +142,7 @@ const exportConfig = () => {
 					</el-descriptions-item>
 					<el-descriptions-item label="输出 Schema">
 						<el-scrollbar height="150px">
-							<pre style="margin: 0; font-size: 12px">{{
+							<pre class="schema-pre">{{
 								formatJson(tool.output_schema)
 							}}</pre>
 						</el-scrollbar>
@@ -156,7 +150,7 @@ const exportConfig = () => {
 							size="small"
 							link
 							type="primary"
-							style="margin-top: 5px"
+							class="copy-button"
 							@click="copyToClipboard(tool.output_schema)"
 						>
 							复制
@@ -164,7 +158,7 @@ const exportConfig = () => {
 					</el-descriptions-item>
 					<el-descriptions-item label="回调函数">
 						<el-scrollbar height="200px">
-							<pre style="margin: 0; font-size: 12px">{{
+							<pre class="schema-pre">{{
 								tool.callback || "未设置"
 							}}</pre>
 						</el-scrollbar>
@@ -173,7 +167,7 @@ const exportConfig = () => {
 							size="small"
 							link
 							type="primary"
-							style="margin-top: 5px"
+							class="copy-button"
 							@click="copyToClipboard(tool.callback)"
 						>
 							复制
@@ -188,7 +182,7 @@ const exportConfig = () => {
 			/>
 		</template>
 		<template #footer>
-			<div style="display: flex; justify-content: space-between; align-items: center">
+			<el-space :size="10" style="width: 100%" justify="space-between">
 				<el-button
 					v-if="config"
 					type="primary"
@@ -196,20 +190,23 @@ const exportConfig = () => {
 				>
 					导出配置为 JSON
 				</el-button>
-				<div style="flex: 1"></div>
 				<el-button @click="dialogVisible = false">关闭</el-button>
-			</div>
+			</el-space>
 		</template>
 	</el-dialog>
 </template>
 
 <style scoped>
-pre {
-	background-color: #f5f7fa;
-	padding: 10px;
-	border-radius: 4px;
-	font-family: "Courier New", monospace;
-	white-space: pre-wrap;
-	word-wrap: break-word;
+.tool-card {
+	margin-bottom: 15px;
+}
+
+.schema-pre {
+	margin: 0;
+	font-size: 12px;
+}
+
+.copy-button {
+	margin-top: 5px;
 }
 </style>
