@@ -11,7 +11,6 @@ const props = defineProps<{
 
 const emit = defineEmits<{
 	edit: [id: number];
-	viewDetail: [id: number];
 	start: [id: number];
 	stop: [id: number];
 	delete: [id: number];
@@ -218,17 +217,7 @@ const handleBatchDelete = async () => {
       @select="handleSelect"
     >
       <el-table-column type="selection" width="55" fixed="left" />
-      <el-table-column property="name" label="服务名" width="200" fixed="left">
-        <template #default="scope">
-          <el-button
-            link
-            type="primary"
-            @click="$emit('viewDetail', scope.row.id)"
-          >
-            {{ scope.row.name }}
-          </el-button>
-        </template>
-      </el-table-column>
+      <el-table-column property="name" label="服务名" width="200" fixed="left" />
     <el-table-column property="version" label="版本号" width="100" />
     <el-table-column property="status" label="状态" width="120">
       <template #default="scope">
@@ -286,16 +275,8 @@ const handleBatchDelete = async () => {
     <el-table-column property="createdAt" label="创建时间" width="200" />
     <el-table-column property="lastModified" label="最后修改时间" width="200" />
 
-    <el-table-column fixed="right" width="200">
+    <el-table-column fixed="right" width="150">
       <template #default="scope">
-        <el-button
-          link
-          type="info"
-          size="small"
-          @click="$emit('viewDetail', scope.row.id)"
-        >
-          详情
-        </el-button>
         <el-button link type="primary" size="small" @click="$emit('edit', scope.row.id)"
           >编辑</el-button
         >
