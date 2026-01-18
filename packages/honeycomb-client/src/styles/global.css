@@ -7,3 +7,64 @@ body {
 	margin: 0;
 	padding: 0;
 }
+
+/* 基于 Element Plus 主题的色彩增强 */
+:root {
+	/* 基于 Element Plus 主色的渐变色彩 */
+	--honeycomb-gradient-primary: linear-gradient(135deg, var(--el-color-primary) 0%, var(--el-color-primary-light-3) 100%);
+	--honeycomb-gradient-success: linear-gradient(135deg, var(--el-color-success) 0%, var(--el-color-success-light-3) 100%);
+	--honeycomb-gradient-warning: linear-gradient(135deg, var(--el-color-warning) 0%, var(--el-color-warning-light-3) 100%);
+	--honeycomb-gradient-info: linear-gradient(135deg, var(--el-color-info) 0%, var(--el-color-info-light-3) 100%);
+	
+	/* 卡片阴影增强 */
+	--honeycomb-shadow-card: 0 2px 12px 0 rgba(0, 0, 0, 0.08);
+	--honeycomb-shadow-card-hover: 0 4px 20px 0 rgba(0, 0, 0, 0.12);
+	--honeycomb-shadow-elevated: 0 8px 24px 0 rgba(0, 0, 0, 0.12);
+	
+	/* 背景色增强 */
+	--honeycomb-bg-gradient: linear-gradient(135deg, var(--el-bg-color-page) 0%, var(--el-fill-color-light) 100%);
+	
+	/* 边框颜色增强 */
+	--honeycomb-border-gradient: linear-gradient(90deg, transparent, var(--el-border-color-light), transparent);
+}
+
+/* 全局过渡效果 */
+.el-card {
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.el-card:hover {
+	transform: translateY(-2px);
+}
+
+/* 按钮增强 */
+.el-button {
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.el-button:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.el-button:active {
+	transform: translateY(0);
+}
+
+/* 表格行悬停效果增强 */
+.el-table__row {
+	transition: background-color 0.2s ease;
+}
+
+.el-table__row:hover {
+	background-color: var(--el-fill-color-lighter) !important;
+}
+
+/* 标签增强 */
+.el-tag {
+	transition: all 0.2s ease;
+}
+
+.el-tag:hover {
+	transform: scale(1.05);
+}

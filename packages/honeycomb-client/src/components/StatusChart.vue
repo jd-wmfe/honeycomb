@@ -284,6 +284,21 @@ const maxToolCountInTop = computed(() => {
 
 .chart-card {
 	margin-bottom: 0;
+	background: linear-gradient(135deg, var(--el-bg-color) 0%, var(--el-fill-color-lighter) 100%);
+	border: 1px solid var(--el-border-color-lighter);
+	position: relative;
+	overflow: hidden;
+}
+
+.chart-card::after {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 2px;
+	background: var(--honeycomb-border-gradient);
+	opacity: 0.5;
 }
 
 .empty-chart {
@@ -312,6 +327,13 @@ const maxToolCountInTop = computed(() => {
 
 .pie-segment {
 	cursor: pointer;
+	transition: all 0.3s ease;
+	filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.pie-segment:hover {
+	filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+	transform-origin: 50% 50%;
 }
 
 .pie-background {
@@ -319,15 +341,28 @@ const maxToolCountInTop = computed(() => {
 }
 
 .bar {
-	background-color: var(--el-color-primary);
+	background: var(--honeycomb-gradient-primary);
+	box-shadow: 0 2px 8px rgba(64, 158, 255, 0.3);
+	transition: all 0.3s ease;
+}
+
+.bar:hover {
+	box-shadow: 0 4px 12px rgba(64, 158, 255, 0.5);
+	transform: scaleY(1.05);
+	transform-origin: bottom;
 }
 
 .ranking-bar-wrapper {
 	background-color: var(--el-border-color-lighter);
+	border-radius: 4px;
+	overflow: hidden;
 }
 
 .ranking-bar {
-	background-color: var(--el-color-primary);
+	background: var(--honeycomb-gradient-primary);
+	border-radius: 4px;
+	transition: all 0.3s ease;
+	box-shadow: 0 2px 4px rgba(64, 158, 255, 0.2);
 }
 
 .chart-legend {
@@ -349,6 +384,13 @@ const maxToolCountInTop = computed(() => {
 	height: 16px;
 	border-radius: 3px;
 	flex-shrink: 0;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+	transition: all 0.2s ease;
+}
+
+.legend-item:hover .legend-color {
+	transform: scale(1.2);
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .legend-label {
@@ -463,6 +505,14 @@ const maxToolCountInTop = computed(() => {
 	align-items: center;
 	gap: 12px;
 	padding: 12px;
+	border-radius: 8px;
+	transition: all 0.2s ease;
+	background: transparent;
+}
+
+.ranking-item:hover {
+	background: var(--el-fill-color-lighter);
+	transform: translateX(4px);
 }
 
 .ranking-number {
@@ -479,22 +529,26 @@ const maxToolCountInTop = computed(() => {
 }
 
 .ranking-number.rank-1 {
-	background: #ffd700;
+	background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
 	color: #333;
+	box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
 }
 
 .ranking-number.rank-2 {
-	background: #c0c0c0;
+	background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
 	color: #333;
+	box-shadow: 0 2px 8px rgba(192, 192, 192, 0.4);
 }
 
 .ranking-number.rank-3 {
-	background: #cd7f32;
+	background: linear-gradient(135deg, #cd7f32 0%, #e6a057 100%);
 	color: #fff;
+	box-shadow: 0 2px 8px rgba(205, 127, 50, 0.4);
 }
 
 .ranking-number:not(.rank-1):not(.rank-2):not(.rank-3) {
-	background: #909399;
+	background: linear-gradient(135deg, var(--el-color-info) 0%, var(--el-color-info-light-3) 100%);
+	box-shadow: 0 2px 6px rgba(144, 147, 153, 0.3);
 }
 
 .ranking-content {

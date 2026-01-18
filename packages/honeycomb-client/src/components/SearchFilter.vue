@@ -98,9 +98,28 @@ defineEmits<{
 <style scoped>
 .search-filter-card {
   margin-bottom: 20px;
+  background: linear-gradient(135deg, var(--el-bg-color) 0%, var(--el-fill-color-lighter) 100%);
+  border: 1px solid var(--el-border-color-lighter);
+  box-shadow: var(--honeycomb-shadow-card);
+}
+
+.search-filter-card:hover {
+  box-shadow: var(--honeycomb-shadow-card-hover);
 }
 
 .status-select {
   width: 100%;
+}
+
+:deep(.el-input__wrapper) {
+  transition: all 0.3s ease;
+}
+
+:deep(.el-input__wrapper:hover) {
+  box-shadow: 0 0 0 1px var(--el-color-primary-light-7) inset;
+}
+
+:deep(.el-input__wrapper.is-focus) {
+  box-shadow: 0 0 0 1px var(--el-color-primary) inset;
 }
 </style>

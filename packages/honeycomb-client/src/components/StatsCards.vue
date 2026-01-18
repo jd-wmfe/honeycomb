@@ -10,7 +10,7 @@ defineProps<{
 <template>
   <el-row :gutter="20" class="stats-row">
     <el-col :xs="24" :sm="12" :md="6" :lg="6">
-      <el-card shadow="hover">
+      <el-card shadow="hover" class="stat-card stat-card--primary">
         <div>
           <div class="stat-number">{{ totalServices }}</div>
           <div class="stat-title">总服务数</div>
@@ -30,7 +30,7 @@ defineProps<{
       </el-card>
     </el-col>
     <el-col :xs="24" :sm="12" :md="6" :lg="6">
-      <el-card shadow="hover">
+      <el-card shadow="hover" class="stat-card stat-card--success">
         <div>
           <div class="stat-number stat-number--success">{{ runningServices }}</div>
           <div class="stat-title">运行中</div>
@@ -46,7 +46,7 @@ defineProps<{
       </el-card>
     </el-col>
     <el-col :xs="24" :sm="12" :md="6" :lg="6">
-      <el-card shadow="hover">
+      <el-card shadow="hover" class="stat-card stat-card--warning">
         <div>
           <div class="stat-number stat-number--warning">{{ stoppedServices }}</div>
           <div class="stat-title">已停止</div>
@@ -62,7 +62,7 @@ defineProps<{
       </el-card>
     </el-col>
     <el-col :xs="24" :sm="12" :md="6" :lg="6">
-      <el-card shadow="hover">
+      <el-card shadow="hover" class="stat-card stat-card--info">
         <div>
           <div class="stat-number stat-number--info">{{ totalTools ?? 0 }}</div>
           <div class="stat-title">工具总数</div>
@@ -81,8 +81,42 @@ defineProps<{
 </template>
 
 <style scoped>
-.el-card {
+.stat-card {
   position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--el-bg-color) 0%, var(--el-fill-color-lighter) 100%);
+  border: 1px solid var(--el-border-color-lighter);
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.stat-card:hover::before {
+  opacity: 1;
+}
+
+.stat-card--primary::before {
+  background: linear-gradient(90deg, var(--el-color-primary), var(--el-color-primary-light-3));
+}
+
+.stat-card--success::before {
+  background: var(--honeycomb-gradient-success);
+}
+
+.stat-card--warning::before {
+  background: var(--honeycomb-gradient-warning);
+}
+
+.stat-card--info::before {
+  background: var(--honeycomb-gradient-info);
 }
 
 .stats-row {
@@ -93,22 +127,38 @@ defineProps<{
   font-size: 36px;
   font-weight: 700;
   margin-bottom: 8px;
+  background: var(--honeycomb-gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transition: all 0.3s ease;
 }
 
 .stat-number--success {
-  color: var(--el-color-success);
+  background: var(--honeycomb-gradient-success);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .stat-number--warning {
-  color: var(--el-color-warning);
+  background: var(--honeycomb-gradient-warning);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .stat-number--info {
-  color: var(--el-text-color-secondary);
+  background: var(--honeycomb-gradient-info);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .stat-title {
   font-size: 14px;
+  color: var(--el-text-color-regular);
+  font-weight: 500;
 }
 
 .stat-icon {
@@ -116,6 +166,13 @@ defineProps<{
   right: 20px;
   top: 50%;
   transform: translateY(-50%);
+  opacity: 0.15;
+  transition: all 0.3s ease;
+  filter: blur(0.5px);
+}
+
+.stat-card:hover .stat-icon {
   opacity: 0.25;
+  transform: translateY(-50%) scale(1.1);
 }
 </style>

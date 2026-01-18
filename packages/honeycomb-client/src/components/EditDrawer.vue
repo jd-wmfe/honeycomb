@@ -461,10 +461,22 @@ const getFormattedCallback = (callback: string): string => {
 <style scoped>
 .tool-edit-card {
   margin-bottom: 20px;
+  background: linear-gradient(135deg, var(--el-color-primary-light-9) 0%, var(--el-bg-color) 100%);
+  border: 1px solid var(--el-color-primary-light-7);
+  box-shadow: 0 2px 8px rgba(64, 158, 255, 0.1);
 }
 
 .tool-display-card {
   margin-bottom: 15px;
+  background: linear-gradient(135deg, var(--el-bg-color) 0%, var(--el-fill-color-lighter) 100%);
+  border: 1px solid var(--el-border-color-lighter);
+  transition: all 0.3s ease;
+}
+
+.tool-display-card:hover {
+  border-color: var(--el-color-primary-light-7);
+  box-shadow: 0 4px 12px rgba(64, 158, 255, 0.15);
+  transform: translateX(4px);
 }
 
 .code-textarea {
@@ -494,6 +506,9 @@ const getFormattedCallback = (callback: string): string => {
   overflow-x: auto;
   max-height: 300px;
   overflow-y: auto;
+  background: var(--el-fill-color-darker);
+  border: 1px solid var(--el-border-color);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
 }
 
 .code-block pre {

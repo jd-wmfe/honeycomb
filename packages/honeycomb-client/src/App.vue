@@ -224,5 +224,28 @@ onMounted(() => {
 .logo-img {
   width: 180px;
   height: auto;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.logo-img:hover {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+  transform: scale(1.02);
+}
+
+:deep(.el-header) {
+  backdrop-filter: blur(10px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+:deep(.el-main) {
+  background: var(--honeycomb-bg-gradient);
+  min-height: calc(100vh - 60px);
+  padding: 20px;
+}
+
+:deep(.el-watermark) {
+  background: var(--honeycomb-bg-gradient);
 }
 </style>

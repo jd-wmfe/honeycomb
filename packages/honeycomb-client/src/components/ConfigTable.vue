@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { ref } from "vue";
 import { StatusEnum } from "@betterhyq/honeycomb-common";
 import type { ServiceConfig } from "../api/configs";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { ElMessage } from "element-plus";
 import consola from "consola";
 
 const props = defineProps<{
@@ -16,138 +15,6 @@ const emit = defineEmits<{
 	stop: [id: number];
 	delete: [id: number];
 }>();
-
-// 批量选择
-const selectedRows = ref<ServiceConfig[]>([]);
-
-const handleSelectAll = (val: boolean) => {
-	if (val) {
-		selectedRows.value = [...props.data];
-	} else {
-		selectedRows.value = [];
-	}
-};
-
-const handleSelect = (row: ServiceConfig, val: boolean) => {
-	if (val) {
-		if (!selectedRows.value.find((r) => r.id === row.id)) {
-			selectedRows.value.push(row);
-		}
-	} else {
-		const index = selectedRows.value.findIndex((r) => r.id === row.id);
-		if (index > -1) {
-			selectedRows.value.splice(index, 1);
-		}
-	}
-};
-
-// 批量操作
-const batchLoading = ref(false);
-
-const handleBatchStart = async () => {
-	if (selectedRows.value.length === 0) {
-		ElMessage.warning("请先选择要启动的服务");
-		return;
-	}
-	const stoppedServices = selectedRows.value.filter(
-		(r) => r.status === StatusEnum.STOPPED,
-	);
-	if (stoppedServices.length === 0) {
-		ElMessage.warning("所选服务中没有已停止的服务");
-		return;
-	}
-	try {
-		await ElMessageBox.confirm(
-			`确定要启动 ${stoppedServices.length} 个服务吗？`,
-			"批量启动",
-			{
-				confirmButtonText: "确定",
-				cancelButtonText: "取消",
-				type: "warning",
-			},
-		);
-		batchLoading.value = true;
-		for (const service of stoppedServices) {
-			emit("start", service.id);
-			// 等待一小段时间，避免请求过快
-			await new Promise((resolve) => setTimeout(resolve, 200));
-		}
-		selectedRows.value = [];
-		ElMessage.success(`成功启动 ${stoppedServices.length} 个服务`);
-	} catch {
-		// 取消操作
-	} finally {
-		batchLoading.value = false;
-	}
-};
-
-const handleBatchStop = async () => {
-	if (selectedRows.value.length === 0) {
-		ElMessage.warning("请先选择要停止的服务");
-		return;
-	}
-	const runningServices = selectedRows.value.filter(
-		(r) => r.status === StatusEnum.RUNNING,
-	);
-	if (runningServices.length === 0) {
-		ElMessage.warning("所选服务中没有运行中的服务");
-		return;
-	}
-	try {
-		await ElMessageBox.confirm(
-			`确定要停止 ${runningServices.length} 个服务吗？`,
-			"批量停止",
-			{
-				confirmButtonText: "确定",
-				cancelButtonText: "取消",
-				type: "warning",
-			},
-		);
-		batchLoading.value = true;
-		for (const service of runningServices) {
-			emit("stop", service.id);
-			// 等待一小段时间，避免请求过快
-			await new Promise((resolve) => setTimeout(resolve, 200));
-		}
-		selectedRows.value = [];
-		ElMessage.success(`成功停止 ${runningServices.length} 个服务`);
-	} catch {
-		// 取消操作
-	} finally {
-		batchLoading.value = false;
-	}
-};
-
-const handleBatchDelete = async () => {
-	if (selectedRows.value.length === 0) {
-		ElMessage.warning("请先选择要删除的服务");
-		return;
-	}
-	try {
-		await ElMessageBox.confirm(
-			`确定要删除 ${selectedRows.value.length} 个服务吗？此操作不可恢复！`,
-			"批量删除",
-			{
-				confirmButtonText: "确定",
-				cancelButtonText: "取消",
-				type: "error",
-			},
-		);
-		const count = selectedRows.value.length;
-		batchLoading.value = true;
-		for (const service of selectedRows.value) {
-			emit("delete", service.id);
-			// 等待一小段时间，避免请求过快
-			await new Promise((resolve) => setTimeout(resolve, 200));
-		}
-		selectedRows.value = [];
-		ElMessage.success(`成功删除 ${count} 个服务`);
-	} catch {
-		// 取消操作
-	} finally {
-		batchLoading.value = false;
-	}
-};
 
 // 生成 MCP 配置 JSON
 const generateMCPConfig = (config: ServiceConfig): string => {
@@ -211,46 +78,6 @@ const copyMCPConfig = async (config: ServiceConfig) => {
 
 <template>
   <div>
-    <!-- 批量操作栏 -->
-    <el-card
-      v-if="selectedRows.length > 0"
-      shadow="never"
-      class="batch-action-card"
-    >
-      <el-space :size="16" style="width: 100%" justify="space-between">
-        <el-text type="primary" style="font-weight: 500">
-          已选择 {{ selectedRows.length }} 项
-        </el-text>
-        <el-space>
-          <el-button
-            size="small"
-            type="success"
-            :loading="batchLoading"
-            @click="handleBatchStart"
-          >
-            批量启动
-          </el-button>
-          <el-button
-            size="small"
-            type="warning"
-            :loading="batchLoading"
-            @click="handleBatchStop"
-          >
-            批量停止
-          </el-button>
-          <el-button
-            size="small"
-            type="danger"
-            :loading="batchLoading"
-            @click="handleBatchDelete"
-          >
-            批量删除
-          </el-button>
-          <el-button size="small" @click="selectedRows = []">取消选择</el-button>
-        </el-space>
-      </el-space>
-    </el-card>
-
     <el-table
       v-loading="loading"
       :data="data"
@@ -258,10 +85,7 @@ const copyMCPConfig = async (config: ServiceConfig) => {
       stripe
       empty-text="暂无数据"
       :height="480"
-      @select-all="handleSelectAll"
-      @select="handleSelect"
     >
-      <el-table-column type="selection" width="55" fixed="left" />
       <el-table-column property="name" label="服务名" width="200" fixed="left" />
     <el-table-column property="version" label="版本号" width="100" />
     <el-table-column property="status" label="状态" width="120">
@@ -325,11 +149,28 @@ const copyMCPConfig = async (config: ServiceConfig) => {
 </template>
 
 <style scoped>
-.batch-action-card {
-  margin-bottom: 15px;
-}
-
 .config-table {
   width: 100%;
+}
+
+.config-table :deep(.el-table__header) {
+  background: linear-gradient(135deg, var(--el-fill-color-light) 0%, var(--el-fill-color-lighter) 100%);
+}
+
+.config-table :deep(.el-table__row) {
+  transition: all 0.2s ease;
+}
+
+.config-table :deep(.el-table__row:hover) {
+  background-color: var(--el-color-primary-light-9) !important;
+  box-shadow: 0 2px 8px rgba(64, 158, 255, 0.1);
+}
+
+.config-table :deep(.el-table__row--striped) {
+  background-color: var(--el-fill-color-lighter);
+}
+
+.config-table :deep(.el-table__row--striped:hover) {
+  background-color: var(--el-color-primary-light-9) !important;
 }
 </style>
