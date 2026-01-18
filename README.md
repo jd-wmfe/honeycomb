@@ -31,7 +31,9 @@ cd honeycomb
 pnpm install
 
 # 开发模式（并行启动前端和后端）
-pnpm dev
+pnpm build
+cd packages/honeycomb-server && pnpm start
+cd packages/honeycomb-client && pnpm dev
 ```
 
 访问应用：

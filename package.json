@@ -22,7 +22,6 @@
 		"check": "turbo run check",
 		"clean": "turbo run clean && rm -rf node_modules",
 		"commit": "cz",
-		"dev": "turbo run dev --parallel",
 		"format": "turbo run format",
 		"lint": "turbo run lint",
 		"prepare": "lefthook install",
