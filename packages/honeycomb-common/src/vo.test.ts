@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import type { QueryConfigsVO, QueryConfigVO } from "./vo";
 
 describe("VO 类型验证", () => {

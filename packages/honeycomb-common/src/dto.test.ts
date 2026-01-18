@@ -1,11 +1,11 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import type {
-  QueryConfigDTO,
   CreateConfigDTO,
-  UpdateConfigDTO,
   DeleteConfigDTO,
+  QueryConfigDTO,
   StartConfigDTO,
   StopConfigDTO,
+  UpdateConfigDTO,
 } from "./dto";
 
 describe("DTO 类型验证", () => {
