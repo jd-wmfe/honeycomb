@@ -2,16 +2,16 @@
 import { StatusEnum } from "@jd-wmfe/honeycomb-common";
 
 defineProps<{
-  loading: boolean;
-  searchKeyword: string;
-  statusFilter: string | null;
+	loading: boolean;
+	searchKeyword: string;
+	statusFilter: string | null;
 }>();
 
-const emit = defineEmits<{
-  "update:searchKeyword": [value: string];
-  "update:statusFilter": [value: string | null];
-  refresh: [];
-  add: [];
+defineEmits<{
+	"update:searchKeyword": [value: string];
+	"update:statusFilter": [value: string | null];
+	refresh: [];
+	add: [];
 }>();
 </script>
 

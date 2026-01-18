@@ -3,15 +3,15 @@ import { StatusEnum } from "@jd-wmfe/honeycomb-common";
 import type { ServiceConfig } from "../api/configs";
 
 defineProps<{
-  loading: boolean;
-  data: ServiceConfig[];
+	loading: boolean;
+	data: ServiceConfig[];
 }>();
 
-const emit = defineEmits<{
-  edit: [id: number];
-  start: [id: number];
-  stop: [id: number];
-  delete: [id: number];
+defineEmits<{
+	edit: [id: number];
+	start: [id: number];
+	stop: [id: number];
+	delete: [id: number];
 }>();
 </script>
 

@@ -12,7 +12,9 @@ import { useConfigActions } from "./composables/useConfigActions";
 
 const activeIndex = ref("1");
 const handleSelect = (key: string, keyPath: string[]) => {
-  consola.debug(`[Client] 菜单选择: key=${key}, keyPath=[${keyPath.join(" > ")}]`);
+	consola.debug(
+		`[Client] 菜单选择: key=${key}, keyPath=[${keyPath.join(" > ")}]`,
+	);
 };
 
 const drawer = ref(false);
@@ -20,130 +22,131 @@ const currentConfig = ref<ServiceConfig | null>(null);
 
 // 使用 composables
 const {
-  loading,
-  configs,
-  searchKeyword,
-  statusFilter,
-  totalServices,
-  runningServices,
-  stoppedServices,
-  filteredData,
-  loadConfigs,
+	loading,
+	configs,
+	searchKeyword,
+	statusFilter,
+	totalServices,
+	runningServices,
+	stoppedServices,
+	filteredData,
+	loadConfigs,
 } = useConfigs();
 
-const { handleStart, handleStop, handleDelete, handleEdit } = useConfigActions(loadConfigs, (id) =>
-  configs.value.find((c) => c.id === id),
+const { handleStart, handleStop, handleDelete, handleEdit } = useConfigActions(
+	loadConfigs,
+	(id) => configs.value.find((c) => c.id === id),
 );
 
 // 刷新数据
 const handleRefresh = async () => {
-  const startTime = Date.now();
-  consola.info("[Client] 用户触发刷新操作");
-  await loadConfigs();
-  const duration = Date.now() - startTime;
-  consola.success(`[Client] 刷新操作完成 (耗时: ${duration}ms)`);
-  ElMessage.success("刷新成功");
+	const startTime = Date.now();
+	consola.info("[Client] 用户触发刷新操作");
+	await loadConfigs();
+	const duration = Date.now() - startTime;
+	consola.success(`[Client] 刷新操作完成 (耗时: ${duration}ms)`);
+	ElMessage.success("刷新成功");
 };
 
 // 编辑配置
 const onEdit = async (id: number) => {
-  const config = await handleEdit(id);
-  if (config) {
-    currentConfig.value = config;
-    drawer.value = true;
-  }
+	const config = await handleEdit(id);
+	if (config) {
+		currentConfig.value = config;
+		drawer.value = true;
+	}
 };
 
 // 保存配置
 const handleSave = async (config: ServiceConfig) => {
-  const startTime = Date.now();
-  const isUpdate = !!config.id;
-  const action = isUpdate ? "更新" : "创建";
+	const startTime = Date.now();
+	const isUpdate = !!config.id;
+	const action = isUpdate ? "更新" : "创建";
 
-  consola.info(`[Client] 用户请求${action}配置:`, {
-    id: config.id || "new",
-    name: config.name,
-    version: config.version,
-    toolsCount: config.tools.length,
-  });
+	consola.info(`[Client] 用户请求${action}配置:`, {
+		id: config.id || "new",
+		name: config.name,
+		version: config.version,
+		toolsCount: config.tools.length,
+	});
 
-  try {
-    loading.value = true;
-    let response;
+	try {
+		loading.value = true;
+		let response;
 
-    if (config.id) {
-      // 更新配置
-      consola.debug(`[Client] 执行更新配置: id=${config.id}`);
-      response = await updateConfig(config.id, {
-        name: config.name,
-        version: config.version,
-        description: config.description,
-        tools: config.tools.map((tool) => ({
-          name: tool.name,
-          description: tool.description,
-          input_schema: tool.input_schema,
-          output_schema: tool.output_schema,
-          callback: tool.callback,
-        })),
-      });
-    } else {
-      // 创建配置
-      consola.debug(`[Client] 执行创建配置: name=${config.name}`);
-      response = await createConfig({
-        name: config.name,
-        version: config.version,
-        description: config.description,
-        tools: config.tools.map((tool) => ({
-          name: tool.name,
-          description: tool.description,
-          input_schema: tool.input_schema,
-          output_schema: tool.output_schema,
-          callback: tool.callback,
-        })),
-      });
-    }
+		if (config.id) {
+			// 更新配置
+			consola.debug(`[Client] 执行更新配置: id=${config.id}`);
+			response = await updateConfig(config.id, {
+				name: config.name,
+				version: config.version,
+				description: config.description,
+				tools: config.tools.map((tool) => ({
+					name: tool.name,
+					description: tool.description,
+					input_schema: tool.input_schema,
+					output_schema: tool.output_schema,
+					callback: tool.callback,
+				})),
+			});
+		} else {
+			// 创建配置
+			consola.debug(`[Client] 执行创建配置: name=${config.name}`);
+			response = await createConfig({
+				name: config.name,
+				version: config.version,
+				description: config.description,
+				tools: config.tools.map((tool) => ({
+					name: tool.name,
+					description: tool.description,
+					input_schema: tool.input_schema,
+					output_schema: tool.output_schema,
+					callback: tool.callback,
+				})),
+			});
+		}
 
-    const duration = Date.now() - startTime;
+		const duration = Date.now() - startTime;
 
-    if (response.code === 200) {
-      const resultId = response.data?.id || config.id || "unknown";
-      consola.success(
-        `[Client] 配置${action}成功 (耗时: ${duration}ms): id=${resultId}, name=${response.data?.name || config.name}`,
-      );
-      ElMessage.success("保存成功");
-      drawer.value = false;
-      await loadConfigs(); // 重新加载列表
-    } else {
-      consola.error(
-        `[Client] 配置${action}失败: id=${config.id || "new"}, code=${response.code}, msg=${response.msg}`,
-      );
-      ElMessage.error(response.msg || "保存失败");
-    }
-  } catch (error) {
-    const duration = Date.now() - startTime;
-    consola.error(`[Client] 配置${action}异常 (耗时: ${duration}ms):`, {
-      id: config.id || "new",
-      name: config.name,
-      error: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined,
-    });
-    ElMessage.error(error instanceof Error ? error.message : "保存失败");
-  } finally {
-    loading.value = false;
-  }
+		if (response.code === 200) {
+			const resultId = response.data?.id || config.id || "unknown";
+			consola.success(
+				`[Client] 配置${action}成功 (耗时: ${duration}ms): id=${resultId}, name=${response.data?.name || config.name}`,
+			);
+			ElMessage.success("保存成功");
+			drawer.value = false;
+			await loadConfigs(); // 重新加载列表
+		} else {
+			consola.error(
+				`[Client] 配置${action}失败: id=${config.id || "new"}, code=${response.code}, msg=${response.msg}`,
+			);
+			ElMessage.error(response.msg || "保存失败");
+		}
+	} catch (error) {
+		const duration = Date.now() - startTime;
+		consola.error(`[Client] 配置${action}异常 (耗时: ${duration}ms):`, {
+			id: config.id || "new",
+			name: config.name,
+			error: error instanceof Error ? error.message : String(error),
+			stack: error instanceof Error ? error.stack : undefined,
+		});
+		ElMessage.error(error instanceof Error ? error.message : "保存失败");
+	} finally {
+		loading.value = false;
+	}
 };
 
 // 添加配置
 const onAdd = () => {
-  consola.info("[Client] 用户请求添加新配置");
-  currentConfig.value = null;
-  drawer.value = true;
+	consola.info("[Client] 用户请求添加新配置");
+	currentConfig.value = null;
+	drawer.value = true;
 };
 
 // 组件挂载时加载数据
 onMounted(() => {
-  consola.info("[Client] 组件已挂载，开始加载初始数据");
-  loadConfigs();
+	consola.info("[Client] 组件已挂载，开始加载初始数据");
+	loadConfigs();
 });
 </script>
 

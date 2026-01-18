@@ -7,173 +7,179 @@ import { StatusEnum, StatusTextMap } from "@jd-wmfe/honeycomb-common";
 import { useToolEditor } from "../composables/useToolEditor";
 
 const props = defineProps<{
-  modelValue: boolean;
-  config?: ServiceConfig | null;
+	modelValue: boolean;
+	config?: ServiceConfig | null;
 }>();
 
 const emit = defineEmits<{
-  "update:modelValue": [value: boolean];
-  save: [config: ServiceConfig];
+	"update:modelValue": [value: boolean];
+	save: [config: ServiceConfig];
 }>();
 
 const direction = ref<DrawerProps["direction"]>("rtl");
 
 // 表单数据
 const formData = ref<ServiceConfig>({
-  id: 0,
-  name: "",
-  version: "",
-  status: StatusEnum.STOPPED,
-  statusText: StatusTextMap.get(StatusEnum.STOPPED) || "已停止",
-  description: "",
-  tools: [],
-  createdAt: "",
-  lastModified: "",
+	id: 0,
+	name: "",
+	version: "",
+	status: StatusEnum.STOPPED,
+	statusText: StatusTextMap.get(StatusEnum.STOPPED) || "已停止",
+	description: "",
+	tools: [],
+	createdAt: "",
+	lastModified: "",
 });
 
 // 使用工具编辑 composable
 const {
-  editingToolIndex,
-  toolForm,
-  addTool: addToolHelper,
-  editTool: editToolHelper,
-  saveTool: saveToolHelper,
-  cancelEditTool,
-  deleteTool: deleteToolHelper,
+	editingToolIndex,
+	toolForm,
+	addTool: addToolHelper,
+	editTool: editToolHelper,
+	saveTool: saveToolHelper,
+	cancelEditTool,
+	deleteTool: deleteToolHelper,
 } = useToolEditor();
 
 // 监听配置变化，初始化表单
 watch(
-  () => props.config,
-  (newConfig) => {
-    if (newConfig) {
-      formData.value = {
-        ...newConfig,
-        tools: newConfig.tools.map((tool) => ({ ...tool })),
-      };
-    } else {
-      // 新建模式
-      formData.value = {
-        id: 0,
-        name: "",
-        version: "",
-        status: StatusEnum.STOPPED,
-        statusText: StatusTextMap.get(StatusEnum.STOPPED) || "已停止",
-        description: "",
-        tools: [],
-        createdAt: new Date()
-          .toLocaleString("zh-CN", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-          })
-          .replace(/\//g, "-"),
-        lastModified: new Date()
-          .toLocaleString("zh-CN", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-          })
-          .replace(/\//g, "-"),
-      };
-    }
-  },
-  { immediate: true },
+	() => props.config,
+	(newConfig) => {
+		if (newConfig) {
+			formData.value = {
+				...newConfig,
+				tools: newConfig.tools.map((tool) => ({ ...tool })),
+			};
+		} else {
+			// 新建模式
+			formData.value = {
+				id: 0,
+				name: "",
+				version: "",
+				status: StatusEnum.STOPPED,
+				statusText: StatusTextMap.get(StatusEnum.STOPPED) || "已停止",
+				description: "",
+				tools: [],
+				createdAt: new Date()
+					.toLocaleString("zh-CN", {
+						year: "numeric",
+						month: "2-digit",
+						day: "2-digit",
+						hour: "2-digit",
+						minute: "2-digit",
+						second: "2-digit",
+					})
+					.replace(/\//g, "-"),
+				lastModified: new Date()
+					.toLocaleString("zh-CN", {
+						year: "numeric",
+						month: "2-digit",
+						day: "2-digit",
+						hour: "2-digit",
+						minute: "2-digit",
+						second: "2-digit",
+					})
+					.replace(/\//g, "-"),
+			};
+		}
+	},
+	{ immediate: true },
 );
 
 // 状态选项
 const statusOptions = [
-  {
-    label: "运行中",
-    value: StatusEnum.RUNNING,
-    text: StatusTextMap.get(StatusEnum.RUNNING) || "运行中",
-  },
-  {
-    label: "已停止",
-    value: StatusEnum.STOPPED,
-    text: StatusTextMap.get(StatusEnum.STOPPED) || "已停止",
-  },
+	{
+		label: "运行中",
+		value: StatusEnum.RUNNING,
+		text: StatusTextMap.get(StatusEnum.RUNNING) || "运行中",
+	},
+	{
+		label: "已停止",
+		value: StatusEnum.STOPPED,
+		text: StatusTextMap.get(StatusEnum.STOPPED) || "已停止",
+	},
 ];
 
 // 计算属性：是否显示抽屉
 const drawerVisible = computed({
-  get: () => props.modelValue,
-  set: (value) => emit("update:modelValue", value),
+	get: () => props.modelValue,
+	set: (value) => emit("update:modelValue", value),
 });
 
 // 关闭抽屉
 const handleClose = (done: () => void) => {
-  ElMessageBox.confirm("确定要关闭吗？未保存的更改将丢失。", "提示", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-    type: "warning",
-  })
-    .then(() => {
-      done();
-    })
-    .catch(() => {
-      // 取消关闭
-    });
+	ElMessageBox.confirm("确定要关闭吗？未保存的更改将丢失。", "提示", {
+		confirmButtonText: "确定",
+		cancelButtonText: "取消",
+		type: "warning",
+	})
+		.then(() => {
+			done();
+		})
+		.catch(() => {
+			// 取消关闭
+		});
 };
 
 // 添加工具
 const addTool = () => {
-  addToolHelper(formData.value.tools);
+	addToolHelper(formData.value.tools);
 };
 
 // 编辑工具
 const editTool = (index: number) => {
-  editToolHelper(index, formData.value.tools);
+	editToolHelper(index, formData.value.tools);
 };
 
 // 保存工具
 const saveTool = () => {
-  saveToolHelper(formData.value.tools);
+	saveToolHelper(formData.value.tools);
 };
 
 // 删除工具
 const deleteTool = (index: number) => {
-  deleteToolHelper(index, formData.value.tools);
+	deleteToolHelper(index, formData.value.tools);
 };
 
 // 保存配置
 const saveConfig = () => {
-  if (!formData.value.name || !formData.value.version || !formData.value.description) {
-    ElMessage.warning("请填写服务名称、版本号和描述");
-    return;
-  }
+	if (
+		!formData.value.name ||
+		!formData.value.version ||
+		!formData.value.description
+	) {
+		ElMessage.warning("请填写服务名称、版本号和描述");
+		return;
+	}
 
-  // 更新状态文本
-  const statusOption = statusOptions.find((opt) => opt.value === formData.value.status);
-  if (statusOption) {
-    formData.value.statusText = statusOption.text;
-  }
+	// 更新状态文本
+	const statusOption = statusOptions.find(
+		(opt) => opt.value === formData.value.status,
+	);
+	if (statusOption) {
+		formData.value.statusText = statusOption.text;
+	}
 
-  // 更新最后修改时间
-  formData.value.lastModified = new Date()
-    .toLocaleString("zh-CN", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    })
-    .replace(/\//g, "-");
+	// 更新最后修改时间
+	formData.value.lastModified = new Date()
+		.toLocaleString("zh-CN", {
+			year: "numeric",
+			month: "2-digit",
+			day: "2-digit",
+			hour: "2-digit",
+			minute: "2-digit",
+			second: "2-digit",
+		})
+		.replace(/\//g, "-");
 
-  emit("save", { ...formData.value });
-  // 注意：不在这里关闭抽屉和显示消息，由父组件处理（因为涉及异步 API 调用）
+	emit("save", { ...formData.value });
+	// 注意：不在这里关闭抽屉和显示消息，由父组件处理（因为涉及异步 API 调用）
 };
 
 // 取消
 const cancel = () => {
-  drawerVisible.value = false;
+	drawerVisible.value = false;
 };
 </script>
 

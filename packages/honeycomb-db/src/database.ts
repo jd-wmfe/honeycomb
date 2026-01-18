@@ -6,13 +6,13 @@ import type { Generated } from "kysely";
  * 使用 Generated<number> 表示自动生成的主键
  */
 export interface ConfigsTable {
-  id: Generated<number>;
-  name: string;
-  version: string;
-  status: string;
-  description: string;
-  created_at: string;
-  last_modified: string;
+	id: Generated<number>;
+	name: string;
+	version: string;
+	status: string;
+	description: string;
+	created_at: string;
+	last_modified: string;
 }
 
 /**
@@ -20,15 +20,15 @@ export interface ConfigsTable {
  * 使用 Generated<number> 表示自动生成的主键
  */
 export interface ToolsTable {
-  id: Generated<number>;
-  config_id: number;
-  name: string;
-  description: string;
-  input_schema: string;
-  output_schema: string;
-  callback: string;
-  created_at: string;
-  last_modified: string;
+	id: Generated<number>;
+	config_id: number;
+	name: string;
+	description: string;
+	input_schema: string;
+	output_schema: string;
+	callback: string;
+	created_at: string;
+	last_modified: string;
 }
 
 /**
@@ -36,8 +36,8 @@ export interface ToolsTable {
  * 基于 @jd-wmfe/honeycomb-common 中的模型类型
  */
 export interface Database {
-  configs: ConfigsTable;
-  tools: ToolsTable;
+	configs: ConfigsTable;
+	tools: ToolsTable;
 }
 
 // 导出类型别名，与模型类型兼容

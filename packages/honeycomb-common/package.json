@@ -1,24 +1,24 @@
 {
-  "name": "@jd-wmfe/honeycomb-common",
-  "version": "2.0.7",
-  "type": "module",
-  "exports": {
-    ".": "./dist/index.mjs"
-  },
-  "types": "./dist/index.d.mts",
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "build": "unbuild",
-    "check": "biome check --write --unsafe .",
-    "format": "biome format --write .",
-    "lint": "biome lint --write --unsafe .",
-    "prepublishOnly": "pnpm build",
-    "test": "vitest run"
-  },
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org"
-  }
+	"name": "@jd-wmfe/honeycomb-common",
+	"version": "2.0.7",
+	"type": "module",
+	"exports": {
+		".": "./dist/index.mjs"
+	},
+	"types": "./dist/index.d.mts",
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "unbuild",
+		"check": "biome check --write --unsafe .",
+		"format": "biome format --write .",
+		"lint": "biome lint --write --unsafe .",
+		"prepublishOnly": "pnpm build",
+		"test": "vitest run"
+	},
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org"
+	}
 }

@@ -1,8 +1,8 @@
 pre-commit:
   parallel: true
   commands:
-    prettier:
-      run: pnpm exec prettier --write {staged_files}
+    format:
+      run: pnpm exec biome format --write {staged_files}
       stage_fixed: true
       glob: "*.{js,ts,json,md,yml,yaml,vue}"
       exclude: |

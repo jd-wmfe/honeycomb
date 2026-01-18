@@ -1,8 +1,8 @@
 <script setup lang="ts">
 defineProps<{
-  totalServices: number;
-  runningServices: number;
-  stoppedServices: number;
+	totalServices: number;
+	runningServices: number;
+	stoppedServices: number;
 }>();
 </script>
 
