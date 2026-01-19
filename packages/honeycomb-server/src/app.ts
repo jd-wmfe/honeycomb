@@ -21,13 +21,16 @@ export async function createApp(): Promise<express.Application> {
 	app.use(express.json());
 	consola.success("[Server] Express 应用已创建，JSON 中间件已启用");
 
+	// 配置 CORS 跨域支持
+	app.use(cors());
+	consola.success("[Server] CORS 跨域中间件已启用");
+
 	// 批量创建 MCP 服务
 	consola.info("[Server] 开始创建 MCP 服务");
 	const mcpHandlersMap = await createMcpServices();
 	consola.info(
 		`[Server] MCP 服务创建完成，共 ${mcpHandlersMap.size} 个服务实例`,
 	);
-	app.use(cors);
 
 	// ==================== 路由配置 ====================
 
