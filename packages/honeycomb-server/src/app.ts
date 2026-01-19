@@ -1,3 +1,4 @@
+import cors from "cors";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import consola from "consola";
@@ -26,6 +27,7 @@ export async function createApp(): Promise<express.Application> {
 	consola.info(
 		`[Server] MCP 服务创建完成，共 ${mcpHandlersMap.size} 个服务实例`,
 	);
+	app.use(cors);
 
 	// ==================== 路由配置 ====================
 
