@@ -22,7 +22,7 @@
 		"@betterhyq/honeycomb-common": "workspace:*",
 		"@betterhyq/honeycomb-db": "workspace:*",
 		"@modelcontextprotocol/sdk": "1.25.2",
-		"cors": "2.8.5",
+		"cors": "2.8.6",
 		"express": "5.2.1",
 		"express-mcp-handler": "0.3.0",
 		"swagger-jsdoc": "6.2.8",
